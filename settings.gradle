@@ -1,0 +1,4 @@
+rootProject.name = 'tm-plan'
+
+include 'tm-plan-api'
+include 'tm-plan-web'
