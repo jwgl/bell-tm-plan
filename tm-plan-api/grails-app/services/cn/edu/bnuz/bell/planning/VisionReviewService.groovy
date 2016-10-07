@@ -3,6 +3,7 @@ package cn.edu.bnuz.bell.planning
 import cn.edu.bnuz.bell.http.BadRequestException
 import cn.edu.bnuz.bell.http.ForbiddenException
 import cn.edu.bnuz.bell.http.NotFoundException
+import cn.edu.bnuz.bell.security.User
 import cn.edu.bnuz.bell.workflow.*
 import grails.transaction.Transactional
 
@@ -14,6 +15,7 @@ import grails.transaction.Transactional
 class VisionReviewService {
     WorkflowService workflowService
     VisionPublicService visionPublicService
+    VisionDraftService visionDraftService
 
     /**
      * 获取审核数据
@@ -143,7 +145,7 @@ class VisionReviewService {
      * @return 审批人列表
      */
     List getApprovers(Long id) {
-        Vision.getApprovers(id)
+        User.findAllWithPermission('PERM_VISION_APPROVE')
     }
 
     /**
@@ -153,7 +155,7 @@ class VisionReviewService {
      * @return 是否为审核人
      */
     private boolean isChecker(Long id, String userId) {
-        Vision.getCheckers(id).collect{it.id}.contains(userId)
+        visionDraftService.getCheckers(id).collect{it.id}.contains(userId)
     }
 
     /**
@@ -163,6 +165,6 @@ class VisionReviewService {
      * @return 是否为审批人
      */
     private boolean isApprover(Long id, String userId) {
-        Vision.getApprovers(id).collect{it.id}.contains(userId)
+        getApprovers(id).collect{it.id}.contains(userId)
     }
 }

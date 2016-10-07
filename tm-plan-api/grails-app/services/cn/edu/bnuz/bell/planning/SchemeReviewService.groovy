@@ -3,6 +3,7 @@ package cn.edu.bnuz.bell.planning
 import cn.edu.bnuz.bell.http.BadRequestException
 import cn.edu.bnuz.bell.http.ForbiddenException
 import cn.edu.bnuz.bell.http.NotFoundException
+import cn.edu.bnuz.bell.security.User
 import cn.edu.bnuz.bell.workflow.*
 import grails.transaction.Transactional
 
@@ -14,7 +15,7 @@ import grails.transaction.Transactional
 class SchemeReviewService {
     WorkflowService workflowService
     SchemePublicService schemePublicService
-
+    SchemeDraftService schemeDraftService
     /**
      * 获取审核数据
      * @param id Scheme ID
@@ -144,7 +145,7 @@ class SchemeReviewService {
      * @return 审批人列表
      */
     List getApprovers(Long id) {
-        Scheme.getApprovers(id)
+        User.findAllWithPermission('PERM_SCHEME_APPROVE')
     }
 
     /**
@@ -154,7 +155,7 @@ class SchemeReviewService {
      * @return 是否为审核人
      */
     private boolean isChecker(Long id, String userId) {
-        Scheme.getCheckers(id).collect{it.id}.contains(userId)
+        schemeDraftService.getCheckers(id).collect{it.id}.contains(userId)
     }
 
     /**
@@ -164,6 +165,6 @@ class SchemeReviewService {
      * @return 是否为审批人
      */
     private boolean isApprover(Long id, String userId) {
-        Scheme.getApprovers(id).collect{it.id}.contains(userId)
+        getApprovers(id).collect{it.id}.contains(userId)
     }
 }

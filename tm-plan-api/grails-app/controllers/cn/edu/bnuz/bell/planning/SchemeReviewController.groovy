@@ -6,13 +6,13 @@ import cn.edu.bnuz.bell.security.SecurityService
 import cn.edu.bnuz.bell.workflow.AcceptCommand
 import cn.edu.bnuz.bell.workflow.AuditAction
 import cn.edu.bnuz.bell.workflow.RejectCommand
-import org.springframework.security.access.annotation.Secured
+import org.springframework.security.access.prepost.PreAuthorize
 
 /**
  * 教学计划审核
  * @author Yang Lin
  */
-@Secured([PlanningPerms.ROLE_SCHEME_CHECK, PlanningPerms.ROLE_SCHEME_APPROVE])
+@PreAuthorize('hasAnyAuthority("PERM_SCHEME_CHECK", "PERM_SCHEME_APPROVE")')
 class SchemeReviewController implements ServiceExceptionHandler {
     SecurityService securityService
     SchemeReviewService schemeReviewService

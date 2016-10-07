@@ -6,13 +6,13 @@ import cn.edu.bnuz.bell.security.SecurityService
 import cn.edu.bnuz.bell.workflow.AcceptCommand
 import cn.edu.bnuz.bell.workflow.AuditAction
 import cn.edu.bnuz.bell.workflow.RejectCommand
-import org.springframework.security.access.annotation.Secured
+import org.springframework.security.access.prepost.PreAuthorize
 
 /**
  * 培养方案审核控制器。
  * @author Yang Lin
  */
-@Secured([PlanningPerms.ROLE_VISION_CHECK, PlanningPerms.ROLE_VISION_APPROVE])
+@PreAuthorize('hasAnyAuthority("PERM_VISION_CHECK", "PERM_VISION_APPROVE")')
 class VisionReviewController implements ServiceExceptionHandler {
     SecurityService securityService
     VisionReviewService visionReviewService

@@ -1,12 +1,12 @@
 package cn.edu.bnuz.bell.planning
 
-import org.springframework.security.access.annotation.Secured
+import org.springframework.security.access.prepost.PreAuthorize
 
 /**
  * 编辑教学计划
  * @author Yang Lin
  */
-@Secured(['ROLE_PERM_SCHEME_WRITE'])
+@PreAuthorize('hasAuthority("PERM_SCHEME_WRITE")')
 class SchemeDraftController {
     def index() {}
 }

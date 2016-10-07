@@ -1,18 +1,16 @@
 package cn.edu.bnuz.bell.planning
 
-import cn.edu.bnuz.bell.http.BadRequestException
 import cn.edu.bnuz.bell.http.ServiceExceptionHandler
-import cn.edu.bnuz.bell.security.SecurityService
 import cn.edu.bnuz.bell.workflow.AuditAction
 import cn.edu.bnuz.bell.workflow.CommitCommand
-import org.springframework.security.access.annotation.Secured
+import org.springframework.security.access.prepost.PreAuthorize
 
 /**
  * 编辑培养方案
  * EndPoint: /users/${userId}/visions
  * @author Yang Lin
  */
-@Secured(PlanningPerms.ROLE_VISION_WRITE)
+@PreAuthorize('hasAuthority("PERM_VISION_WRITE")')
 class VisionDraftController implements ServiceExceptionHandler{
     VisionDraftService visionDraftService
     /**

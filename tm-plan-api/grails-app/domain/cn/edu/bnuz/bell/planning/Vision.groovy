@@ -2,7 +2,6 @@ package cn.edu.bnuz.bell.planning
 
 import cn.edu.bnuz.bell.workflow.AuditAction
 import cn.edu.bnuz.bell.workflow.AuditStatus
-import cn.edu.bnuz.bell.security.User
 import cn.edu.bnuz.bell.workflow.WorkflowInstance
 
 /**
@@ -92,23 +91,6 @@ class Vision {
 
     String getWorkflowId() {
         this.previous ? 'vision.revise' : 'vision.create'
-    }
-
-    static Boolean allowAction(AuditStatus status, AuditAction action) {
-        status.allow(action)
-    }
-
-    static String getDepartmentId(Long id) {
-        List<String> results = Vision.executeQuery 'select m.department.id from Vision v join v.program p join p.major m where v.id = :id', [id: id]
-        results ? results[0] : null
-    }
-
-    static List getApprovers(Long id) {
-        User.findAllWithPermission(PlanningPerms.VISION_APPROVE)
-    }
-
-    static List getCheckers(Long id) {
-        User.findAllWithPermission(PlanningPerms.VISION_CHECK, getDepartmentId(id))
     }
 
     static Integer VERSION_INCREMENT = 1 << 8
