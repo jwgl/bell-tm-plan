@@ -5,13 +5,13 @@ import cn.edu.bnuz.bell.http.ServiceExceptionHandler
 import cn.edu.bnuz.bell.security.SecurityService
 import cn.edu.bnuz.bell.workflow.AuditAction
 import cn.edu.bnuz.bell.workflow.CommitCommand
-import org.springframework.security.access.annotation.Secured
+import org.springframework.security.access.prepost.PreAuthorize
 
 /**
  * 教学计划编辑
  * @author Yang Lin
  */
-@Secured(PlanningPerms.ROLE_SCHEME_WRITE)
+@PreAuthorize('hasAuthority("PERM_SCHEME_WRITE")')
 class SchemeDraftController implements ServiceExceptionHandler {
     SchemeDraftService schemeDraftService
     SecurityService securityService

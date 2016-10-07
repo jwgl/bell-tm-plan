@@ -5,6 +5,7 @@ import cn.edu.bnuz.bell.http.ForbiddenException
 import cn.edu.bnuz.bell.http.NotFoundException
 import cn.edu.bnuz.bell.master.TermService
 import cn.edu.bnuz.bell.organization.Department
+import cn.edu.bnuz.bell.security.User
 import cn.edu.bnuz.bell.service.DataAccessService
 import cn.edu.bnuz.bell.security.UserLogService
 import cn.edu.bnuz.bell.utils.CollectionUtils
@@ -100,7 +101,7 @@ order by subject.id, major.grade desc, s.versionNumber desc
             throw new ForbiddenException()
         }
 
-        if (Scheme.allowAction(scheme.status, AuditAction.UPDATE)) {
+        if (scheme.status.allow(AuditAction.UPDATE)) {
             scheme.editable = true
         } else if (canRevise(id)) {
             scheme.revisable = true
@@ -122,7 +123,7 @@ order by subject.id, major.grade desc, s.versionNumber desc
             throw new ForbiddenException()
         }
 
-        if (!Scheme.allowAction(scheme.status, AuditAction.UPDATE)) {
+        if (!scheme.status.allow(AuditAction.UPDATE)) {
             throw new BadRequestException()
         }
 
@@ -535,7 +536,14 @@ where scheme.id = :id
      * @return 审核人列表
      */
     List getCheckers(Long id) {
-        Scheme.getCheckers(id)
+        def departmentId = dataAccessService.getString '''
+select m.department.id
+from Scheme s
+join s.program p
+join p.major m
+where s.id = :id
+''', [id: id]
+        User.findAllWithPermission('PERM_SCHEME_CHECK', departmentId)
     }
 
     /**

@@ -4,6 +4,7 @@ import cn.edu.bnuz.bell.http.BadRequestException
 import cn.edu.bnuz.bell.http.ForbiddenException
 import cn.edu.bnuz.bell.http.NotFoundException
 import cn.edu.bnuz.bell.master.TermService
+import cn.edu.bnuz.bell.security.User
 import cn.edu.bnuz.bell.security.UserLogService
 import cn.edu.bnuz.bell.service.DataAccessService
 import cn.edu.bnuz.bell.utils.CollectionUtils
@@ -94,7 +95,7 @@ order by subject.id, major.grade desc, v.versionNumber desc
             throw new ForbiddenException()
         }
 
-        if (Vision.allowAction(vision.status, AuditAction.UPDATE)) {
+        if (vision.status.allow(AuditAction.UPDATE)) {
             vision.editable = true
         } else if (canRevise(id)) {
             vision.revisable = true
@@ -116,7 +117,7 @@ order by subject.id, major.grade desc, v.versionNumber desc
             throw new ForbiddenException()
         }
 
-        if (!Vision.allowAction(vision.status, AuditAction.UPDATE)) {
+        if (!vision.status.allow(AuditAction.UPDATE)) {
             throw new BadRequestException()
         }
 
@@ -367,6 +368,13 @@ where vision.id = :id
      * @return 审核人列表
      */
     List getCheckers(Long id) {
-        Vision.getCheckers(id)
+        def departmentId = dataAccessService.getString '''
+select m.department.id
+from Vision v
+join v.program p
+join p.major m
+where v.id = :id
+''', [id: id]
+        User.findAllWithPermission('PERM_VISION_CHECK', departmentId)
     }
 }

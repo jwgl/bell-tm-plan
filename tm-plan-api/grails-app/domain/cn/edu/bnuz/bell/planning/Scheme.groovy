@@ -1,6 +1,5 @@
 package cn.edu.bnuz.bell.planning
 
-import cn.edu.bnuz.bell.security.User
 import cn.edu.bnuz.bell.workflow.AuditAction
 import cn.edu.bnuz.bell.workflow.AuditStatus
 import cn.edu.bnuz.bell.workflow.WorkflowInstance
@@ -62,25 +61,6 @@ class Scheme {
         workflowInstance    nullable: true
     }
 
-    /**
-     * 操作常数：新建
-     */
-    static Integer OP_CREATE = 0
-
-    /**
-     * 操作常数：更新
-     */
-    static Integer OP_UPDATE = 1
-
-    /**
-     * 操作常数：删除
-     */
-    static Integer OP_DELETE = 2
-
-    String getWorkflowId() {
-        this.previous ? 'scheme.revise' : 'scheme.create'
-    }
-
     Boolean allowAction(AuditAction action) {
         return this.status.allow(action)
     }
@@ -89,21 +69,8 @@ class Scheme {
         return this.status.next(action)
     }
 
-    static Boolean allowAction(AuditStatus status, AuditAction action) {
-        return status.allow(action)
-    }
-
-    static String getDepartmentId(Long id) {
-        List<String> results = Scheme.executeQuery 'select m.department.id from Scheme s join s.program p join p.major m where s.id = :id', [id: id]
-        results ? results[0] : null
-    }
-
-    static List getApprovers(Long id) {
-        User.findAllWithPermission(PlanningPerms.SCHEME_APPROVE)
-    }
-
-    static List getCheckers(Long id) {
-        User.findAllWithPermission(PlanningPerms.SCHEME_CHECK, getDepartmentId(id))
+    String getWorkflowId() {
+        this.previous ? 'scheme.revise' : 'scheme.create'
     }
 
     static Integer VERSION_INCREMENT = 1 << 8

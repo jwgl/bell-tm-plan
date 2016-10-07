@@ -1,14 +1,13 @@
 package cn.edu.bnuz.bell.planning
 
 import cn.edu.bnuz.bell.http.ServiceExceptionHandler
-import cn.edu.bnuz.bell.security.SecurityService
-import org.springframework.security.access.annotation.Secured
+import org.springframework.security.access.prepost.PreAuthorize
 
 /**
  * 培养方案公共控制器。
  * @author Yang Lin
  */
-@Secured(PlanningPerms.ROLE_VISION_READ)
+@PreAuthorize('hasAuthority("PERM_VISION_READ")')
 class VisionPublicController implements ServiceExceptionHandler {
     /**
      * 所有在校年级培养方案
