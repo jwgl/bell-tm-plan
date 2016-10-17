@@ -176,7 +176,7 @@ select new Dto (
   program.type as programType,
   subject.name as subjectName,
   department.id as departmentId,
-  department.name ad departmentName,
+  department.name as departmentName,
   major.grade as grade,
   program.credit as credit
 )
@@ -478,11 +478,11 @@ where program.id = :programId
             throw new ForbiddenException()
         }
 
-        if (!scheme.allowAction(AuditAction.COMMIT)) {
+        def action = AuditAction.COMMIT
+        if (!scheme.allowAction(action)) {
             throw new BadRequestException()
         }
 
-        def action = AuditAction.COMMIT
         if (scheme.status == AuditStatus.REJECTED) {
             workflowService.setProcessed(scheme.workflowInstance, userId)
         } else {
