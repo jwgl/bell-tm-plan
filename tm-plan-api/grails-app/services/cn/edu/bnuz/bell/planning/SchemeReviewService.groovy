@@ -25,9 +25,9 @@ class SchemeReviewService {
      */
     def getSchemeForReview(Long id, String userId, UUID workitemId) {
         def scheme = schemePublicService.getSchemeInfo(id)
+        def workitem = Workitem.get(workitemId)
 
-        Workitem workItem = Workitem.get(workitemId)
-        def reviewType = workItem.activitySuffix
+        def reviewType = workitem.activitySuffix
         switch (reviewType) {
             case ReviewTypes.CHECK:
                 if (!isChecker(id, userId)) {

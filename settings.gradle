@@ -1,4 +1,4 @@
-rootProject.name = 'tm-plan'
+rootProject.name = 'bell-tm-plan'
 
 include 'tm-plan-api'
 include 'tm-plan-web'
