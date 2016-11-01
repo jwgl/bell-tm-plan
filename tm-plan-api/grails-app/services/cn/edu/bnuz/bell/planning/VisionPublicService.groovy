@@ -5,7 +5,7 @@ import cn.edu.bnuz.bell.master.TermService
 import cn.edu.bnuz.bell.service.DataAccessService
 import cn.edu.bnuz.bell.utils.CollectionUtils
 import cn.edu.bnuz.bell.utils.GroupCondition
-import cn.edu.bnuz.bell.workflow.AuditStatus
+import cn.edu.bnuz.bell.workflow.State
 
 /**
  * 培养方案审核服务
@@ -48,7 +48,7 @@ and v.versionNumber = (
   and v2.program = v.program
 )
 order by department.id, subject.id, major.grade
-''', [startGrade: startGrade, status: AuditStatus.APPROVED]
+''', [startGrade: startGrade, status: State.APPROVED]
 
         List<GroupCondition> conditions = [
                 new GroupCondition(
@@ -103,7 +103,7 @@ and v.versionNumber = (
   and v2.program = v.program
 )
 order by major.grade desc, subject.id
-''', [startGrade: startGrade, departmentId: departmentId, status: AuditStatus.APPROVED]
+''', [startGrade: startGrade, departmentId: departmentId, status: State.APPROVED]
     }
 
     /**

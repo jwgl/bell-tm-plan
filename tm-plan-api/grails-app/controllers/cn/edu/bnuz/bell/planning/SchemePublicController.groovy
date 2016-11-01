@@ -24,12 +24,12 @@ class SchemePublicController implements ServiceExceptionHandler {
         renderJson schemePublicService.getSchemesByDepartment(departmentId)
     }
 
-    def schemeDirectionsByDepartment(String departmentId) {
-        renderJson schemePublicService.getSchemeDirectionsByDepartment(departmentId)
-    }
-
     def show(Long id) {
         renderJson schemePublicService.getSchemeInfo(id)
+    }
+
+    def directionsByDepartment(String departmentId) {
+        renderJson schemePublicService.getDirectionsByDepartment(departmentId)
     }
 
     def propertyCourses(Long schemePublicId, Integer propertyId) {

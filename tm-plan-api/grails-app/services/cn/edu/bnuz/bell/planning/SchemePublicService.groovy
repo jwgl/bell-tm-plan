@@ -4,7 +4,7 @@ import cn.edu.bnuz.bell.master.TermService
 import cn.edu.bnuz.bell.service.DataAccessService
 import cn.edu.bnuz.bell.utils.CollectionUtils
 import cn.edu.bnuz.bell.utils.GroupCondition
-import cn.edu.bnuz.bell.workflow.AuditStatus
+import cn.edu.bnuz.bell.workflow.State
 
 /**
  * 教学计划公共服务。
@@ -45,7 +45,7 @@ and scheme.versionNumber = (
   and s.program = scheme.program
 )
 order by department.id, subject.id, major.grade
-''', [startGrade: startGrade, status: AuditStatus.APPROVED]
+''', [startGrade: startGrade, status: State.APPROVED]
 
         List<GroupCondition> conditions = [
                 new GroupCondition(
@@ -101,10 +101,10 @@ and s.versionNumber = (
   and s2.program = s.program
 )
 order by major.grade desc, subject.id
-''', [startGrade: startGrade, departmentId: departmentId, status: AuditStatus.APPROVED]
+''', [startGrade: startGrade, departmentId: departmentId, status: State.APPROVED]
     }
 
-    def getSchemeDirectionsByDepartment(String departmentId) {
+    def getDirectionsByDepartment(String departmentId) {
         def startGrade = termService.minInSchoolGrade
         Scheme.executeQuery '''
 select new map(
@@ -131,7 +131,7 @@ and s.versionNumber = (
   and s2.program = s.program
 )
 order by major.grade desc, subject.id
-''', [startGrade: startGrade, departmentId: departmentId, status: AuditStatus.APPROVED]
+''', [startGrade: startGrade, departmentId: departmentId, status: State.APPROVED]
     }
 
     /**
@@ -295,7 +295,7 @@ where scheme.program.id = :programId
     where s.program = :programId
     and s.status = :status
   )
-''', [programId: programId, status: AuditStatus.APPROVED]
+''', [programId: programId, status: State.APPROVED]
 
         results ? results[0] : null
     }

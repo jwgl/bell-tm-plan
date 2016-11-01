@@ -6,15 +6,14 @@ import cn.edu.bnuz.bell.http.NotFoundException
 import cn.edu.bnuz.bell.master.TermService
 import cn.edu.bnuz.bell.organization.Department
 import cn.edu.bnuz.bell.security.User
-import cn.edu.bnuz.bell.service.DataAccessService
 import cn.edu.bnuz.bell.security.UserLogService
+import cn.edu.bnuz.bell.service.DataAccessService
 import cn.edu.bnuz.bell.utils.CollectionUtils
 import cn.edu.bnuz.bell.utils.GroupCondition
-import cn.edu.bnuz.bell.workflow.Activities
-import cn.edu.bnuz.bell.workflow.AuditAction
-import cn.edu.bnuz.bell.workflow.AuditStatus
-import cn.edu.bnuz.bell.workflow.CommitCommand
+import cn.edu.bnuz.bell.workflow.DomainStateMachineHandler
+import cn.edu.bnuz.bell.workflow.State
 import cn.edu.bnuz.bell.workflow.WorkflowService
+import cn.edu.bnuz.bell.workflow.commands.SubmitCommand
 import grails.compiler.GrailsCompileStatic
 import grails.transaction.Transactional
 import groovy.transform.TypeCheckingMode
@@ -32,6 +31,7 @@ class SchemeDraftService {
     WorkflowService workflowService
     DataAccessService dataAccessService
     TermService termService
+    DomainStateMachineHandler domainStateMachineHandler
     /**
      * 获取所有者的教学计划
      * @param userId 用户ID
@@ -101,7 +101,7 @@ order by subject.id, major.grade desc, s.versionNumber desc
             throw new ForbiddenException()
         }
 
-        if (scheme.status.allow(AuditAction.UPDATE)) {
+        if (domainStateMachineHandler.canUpdate(scheme)) {
             scheme.editable = true
         } else if (canRevise(id)) {
             scheme.revisable = true
@@ -123,7 +123,7 @@ order by subject.id, major.grade desc, s.versionNumber desc
             throw new ForbiddenException()
         }
 
-        if (!scheme.status.allow(AuditAction.UPDATE)) {
+        if (!domainStateMachineHandler.canUpdate(scheme)) {
             throw new BadRequestException()
         }
 
@@ -219,14 +219,12 @@ where program.id = :programId
         Scheme scheme = new Scheme(
                 program: Program.load(cmd.programId),
                 versionNumber: cmd.versionNumber,
-                status: AuditStatus.CREATED,
+                status: domainStateMachineHandler.initialState,
         )
-
         processSchemeCourses(scheme, cmd.courses)
-
         scheme.save()
 
-        userLogService.log(AuditAction.CREATE, scheme)
+        domainStateMachineHandler.create(scheme, userId)
 
         return scheme
     }
@@ -250,12 +248,12 @@ where program.id = :programId
                 program: Program.load(cmd.programId),
                 versionNumber: cmd.versionNumber,
                 previous: Scheme.load(cmd.previousId),
-                status: AuditStatus.CREATED
+                status: domainStateMachineHandler.initialState
         )
         processSchemeCourses(scheme, cmd.courses)
         scheme.save()
 
-        userLogService.log(AuditAction.CREATE, scheme)
+        domainStateMachineHandler.create(scheme, userId)
 
         return scheme
     }
@@ -277,17 +275,16 @@ where program.id = :programId
             throw new ForbiddenException()
         }
 
-        if (!scheme.allowAction(AuditAction.UPDATE)) {
+        if (!domainStateMachineHandler.canUpdate(scheme)) {
             throw new BadRequestException()
         }
 
         scheme.versionNumber = cmd.versionNumber
         processSchemeCourses(scheme, cmd.courses)
+
+        domainStateMachineHandler.update(scheme, userId)
+
         scheme.save()
-
-        userLogService.log(AuditAction.UPDATE, scheme)
-
-        return scheme
     }
 
     private void processSchemeCourses(Scheme scheme, List<SchemeCourseCommand> schemeCourseCommands) {
@@ -448,11 +445,9 @@ where program.id = :programId
             throw new ForbiddenException()
         }
 
-        if (!scheme.allowAction(AuditAction.DELETE)) {
+        if (!domainStateMachineHandler.canUpdate(scheme)) {
             throw new BadRequestException()
         }
-
-        userLogService.log(Scheme, AuditAction.DELETE, scheme)
 
         if (scheme.workflowInstance) {
             scheme.workflowInstance.delete()
@@ -467,7 +462,7 @@ where program.id = :programId
      * @param cmd 命令
      * @param userId 提交人
      */
-    void commit(CommitCommand cmd, String userId) {
+    void submit(SubmitCommand cmd, String userId) {
         Scheme scheme = Scheme.get(cmd.id)
 
         if (!scheme) {
@@ -478,22 +473,13 @@ where program.id = :programId
             throw new ForbiddenException()
         }
 
-        def action = AuditAction.COMMIT
-        if (!scheme.allowAction(action)) {
+        if (!domainStateMachineHandler.canSubmit(scheme)) {
             throw new BadRequestException()
         }
 
-        if (scheme.status == AuditStatus.REJECTED) {
-            workflowService.setProcessed(scheme.workflowInstance, userId)
-        } else {
-            scheme.workflowInstance = workflowService.createInstance(scheme.workflowId, cmd.title, cmd.id)
-        }
-        workflowService.createWorkItem(scheme.workflowInstance, Activities.CHECK, userId, action, cmd.comment, cmd.to)
+        domainStateMachineHandler.submit(scheme, userId, cmd.to, cmd.comment, cmd.title)
 
-        scheme.status = scheme.nextStatus(action)
         scheme.save()
-
-        userLogService.log(action, scheme)
     }
 
     /**
@@ -527,7 +513,7 @@ where scheme.id = :id
     from ProgramSettings ps
     where ps.schemeRevisible = true
   )
-''', [id: id, status: AuditStatus.APPROVED]
+''', [id: id, status: State.APPROVED]
     }
 
     /**
