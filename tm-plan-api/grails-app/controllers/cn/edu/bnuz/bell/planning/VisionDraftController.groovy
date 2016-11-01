@@ -1,8 +1,8 @@
 package cn.edu.bnuz.bell.planning
 
 import cn.edu.bnuz.bell.http.ServiceExceptionHandler
-import cn.edu.bnuz.bell.workflow.AuditAction
-import cn.edu.bnuz.bell.workflow.CommitCommand
+import cn.edu.bnuz.bell.workflow.Event
+import cn.edu.bnuz.bell.workflow.commands.SubmitCommand
 import org.springframework.security.access.prepost.PreAuthorize
 
 /**
@@ -111,13 +111,13 @@ class VisionDraftController implements ServiceExceptionHandler{
      * @return 服务状态
      */
     def patch(String userId, Long id, String op) {
-        def operation = AuditAction.valueOf(op)
+        def operation = Event.valueOf(op)
         switch (operation) {
-            case AuditAction.COMMIT:
-                def cmd = new CommitCommand()
+            case Event.SUBMIT:
+                def cmd = new SubmitCommand()
                 bindData(cmd, request.JSON)
                 cmd.id = id
-                visionDraftService.commit(cmd, userId)
+                visionDraftService.submit(cmd, userId)
                 break
         }
         renderOk()

@@ -9,7 +9,11 @@ import cn.edu.bnuz.bell.security.UserLogService
 import cn.edu.bnuz.bell.service.DataAccessService
 import cn.edu.bnuz.bell.utils.CollectionUtils
 import cn.edu.bnuz.bell.utils.GroupCondition
-import cn.edu.bnuz.bell.workflow.*
+import cn.edu.bnuz.bell.workflow.Activities
+import cn.edu.bnuz.bell.workflow.DomainStateMachineHandler
+import cn.edu.bnuz.bell.workflow.State
+import cn.edu.bnuz.bell.workflow.WorkflowService
+import cn.edu.bnuz.bell.workflow.commands.SubmitCommand
 import grails.transaction.Transactional
 
 /**
@@ -25,6 +29,7 @@ class VisionDraftService {
     WorkflowService workflowService
     DataAccessService dataAccessService
     TermService termService
+    DomainStateMachineHandler domainStateMachineHandler
 
     /**
      * 获取所有者的培养方案
@@ -91,11 +96,11 @@ order by subject.id, major.grade desc, v.versionNumber desc
     def getVisionForShow(Long id, String userId) {
         def vision = visionPublicService.getVisionInfo(id)
 
-        if (!programService.isOwner(vision.programId, userId)) {
+        if (!programService.isOwner((Integer)vision.programId, userId)) {
             throw new ForbiddenException()
         }
 
-        if (vision.status.allow(AuditAction.UPDATE)) {
+        if (domainStateMachineHandler.canUpdate(vision)) {
             vision.editable = true
         } else if (canRevise(id)) {
             vision.revisable = true
@@ -113,11 +118,11 @@ order by subject.id, major.grade desc, v.versionNumber desc
     def getVisionForEdit(Long id, String userId) {
         def vision = visionPublicService.getVisionInfo(id)
 
-        if (!programService.isOwner(vision.programId, userId)) {
+        if (!programService.isOwner((Integer)vision.programId, userId)) {
             throw new ForbiddenException()
         }
 
-        if (!vision.status.allow(AuditAction.UPDATE)) {
+        if (!domainStateMachineHandler.canUpdate(vision)) {
             throw new BadRequestException()
         }
 
@@ -127,7 +132,7 @@ order by subject.id, major.grade desc, v.versionNumber desc
     def getVisionForRevise(Long base, String userId) {
         def vision = visionPublicService.getVisionInfo(base)
 
-        if (!programService.isOwner(vision.programId, userId)) {
+        if (!programService.isOwner((Integer)vision.programId, userId)) {
             throw new ForbiddenException()
         }
 
@@ -183,30 +188,27 @@ where program.id = :programId
     }
 
     /**
-     * 更新
-     * @param cmd 更新数据
+     * 新建
+     * @param cmd 新建数据
      * @param userId 用户ID
      * @return Vision
      */
-    def update(VisionUpdateCommand cmd, String userId) {
-        Vision vision = Vision.get(cmd.id)
-
-        if (!vision) {
-            throw new NotFoundException()
-        }
-
-        if (!programService.isOwner(vision.program.id, userId)) {
+    Vision create(VisionCreateCommand cmd, String userId) {
+        if (!programService.isOwner(cmd.programId, userId)) {
             throw new ForbiddenException()
         }
 
-        if (!vision.allowAction(AuditAction.UPDATE)) {
+        if (!canCreate(cmd.programId)) {
             throw new BadRequestException()
         }
 
+        Vision vision = new Vision()
         vision.properties = cmd
+        vision.program = Program.load(cmd.programId)
+        vision.status = domainStateMachineHandler.initialState
         vision.save()
 
-        userLogService.log(AuditAction.UPDATE, vision)
+        domainStateMachineHandler.create(vision, userId)
 
         return vision
     }
@@ -231,40 +233,41 @@ where program.id = :programId
         vision.properties = cmd
         vision.program = previous.program
         vision.previous = previous
-        vision.status = AuditStatus.CREATED
+        vision.status = domainStateMachineHandler.initialState
         vision.save()
 
-        userLogService.log(AuditAction.CREATE, vision)
+        domainStateMachineHandler.create(vision, userId)
 
         return vision
     }
 
     /**
-     * 新建
-     * @param cmd 新建数据
+     * 更新
+     * @param cmd 更新数据
      * @param userId 用户ID
      * @return Vision
      */
-    Vision create(VisionCreateCommand cmd, String userId) {
-        if (!programService.isOwner(cmd.programId, userId)) {
+    def update(VisionUpdateCommand cmd, String userId) {
+        Vision vision = Vision.get(cmd.id)
+
+        if (!vision) {
+            throw new NotFoundException()
+        }
+
+        if (!programService.isOwner(vision.program.id, userId)) {
             throw new ForbiddenException()
         }
 
-        if (!canCreate(cmd.programId)) {
+        if (!domainStateMachineHandler.canUpdate(vision)) {
             throw new BadRequestException()
         }
 
-        Vision vision = new Vision()
         vision.properties = cmd
-        vision.program = Program.load(cmd.programId)
-        vision.status = AuditStatus.CREATED
+
+        domainStateMachineHandler.update(vision, userId)
+
         vision.save()
-
-        userLogService.log(AuditAction.CREATE, vision)
-
-        return vision
     }
-
 
     /**
      * 删除
@@ -282,11 +285,9 @@ where program.id = :programId
             throw new ForbiddenException()
         }
 
-        if (!vision.allowAction(AuditAction.DELETE)) {
+        if (!domainStateMachineHandler.canUpdate(vision)) {
             throw new BadRequestException()
         }
-
-        userLogService.log(AuditAction.DELETE, vision)
 
         if (vision.workflowInstance) {
             vision.workflowInstance.delete()
@@ -300,7 +301,7 @@ where program.id = :programId
      * @param cmd 命令
      * @param userId 提交人
      */
-    void commit(CommitCommand cmd, String userId) {
+    void submit(SubmitCommand cmd, String userId) {
         Vision vision = Vision.get(cmd.id)
 
         if (!vision) {
@@ -311,22 +312,13 @@ where program.id = :programId
             throw new ForbiddenException()
         }
 
-        if (!vision.allowAction(AuditAction.COMMIT)) {
+        if (!domainStateMachineHandler.canSubmit(vision)) {
             throw new BadRequestException()
         }
 
-        def action = AuditAction.COMMIT
-        if (vision.status == AuditStatus.REJECTED) {
-            workflowService.setProcessed(vision.workflowInstance, userId)
-        } else {
-            vision.workflowInstance = workflowService.createInstance(vision.workflowId, cmd.title, cmd.id)
-        }
-        workflowService.createWorkItem(vision.workflowInstance, Activities.CHECK, userId, action, cmd.comment, cmd.to)
+        domainStateMachineHandler.submit(vision, userId, cmd.to, cmd.comment, cmd.title)
 
-        vision.status = vision.nextStatus(action)
         vision.save()
-
-        userLogService.log(action, vision)
     }
 
     /**
@@ -350,7 +342,7 @@ where vision.id = :id
     from ProgramSettings ps
     where ps.visionRevisible = true
   )
-''', [id: id, status: AuditStatus.APPROVED]
+''', [id: id, status: State.APPROVED]
     }
 
     /**

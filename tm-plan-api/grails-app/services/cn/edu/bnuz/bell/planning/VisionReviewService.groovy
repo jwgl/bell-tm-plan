@@ -1,10 +1,14 @@
 package cn.edu.bnuz.bell.planning
 
 import cn.edu.bnuz.bell.http.BadRequestException
-import cn.edu.bnuz.bell.http.ForbiddenException
 import cn.edu.bnuz.bell.http.NotFoundException
 import cn.edu.bnuz.bell.security.User
-import cn.edu.bnuz.bell.workflow.*
+import cn.edu.bnuz.bell.workflow.AbstractReviewService
+import cn.edu.bnuz.bell.workflow.Activities
+import cn.edu.bnuz.bell.workflow.DomainStateMachineHandler
+import cn.edu.bnuz.bell.workflow.Workitem
+import cn.edu.bnuz.bell.workflow.commands.AcceptCommand
+import cn.edu.bnuz.bell.workflow.commands.RejectCommand
 import grails.transaction.Transactional
 
 /**
@@ -12,10 +16,10 @@ import grails.transaction.Transactional
  * @author Yang Lin
  */
 @Transactional
-class VisionReviewService {
-    WorkflowService workflowService
+class VisionReviewService extends AbstractReviewService {
     VisionPublicService visionPublicService
     VisionDraftService visionDraftService
+    DomainStateMachineHandler domainStateMachineHandler
 
     /**
      * 获取审核数据
@@ -26,29 +30,9 @@ class VisionReviewService {
      */
     def getVisionForReview(Long id, String userId, UUID workitemId) {
         def vision = visionPublicService.getVisionInfo(id)
-
-        Workitem workItem = Workitem.get(workitemId)
-        def reviewType = workItem.activitySuffix
-        switch (reviewType) {
-            case ReviewTypes.CHECK:
-                if (!isChecker(id, userId)) {
-                    throw new ForbiddenException()
-                }
-                break
-            case ReviewTypes.APPROVE:
-                if (!isApprover(id, userId)) {
-                    throw new ForbiddenException()
-                }
-                break
-            case ReviewTypes.REVIEW:
-                // 已在WorkflowController中进行了身份验证
-                break;
-            default:
-                throw new BadRequestException()
-        }
-
-        vision.reviewType = reviewType
-
+        def activity = Workitem.get(workitemId).activitySuffix
+        checkReviewer(id, activity, userId)
+        vision.activity = activity
         return vision
     }
 
@@ -58,44 +42,23 @@ class VisionReviewService {
      * @param userId 用户ID
      * @param workItemId 工作项ID
      */
-    void accept(AcceptCommand cmd, String userId, UUID workItemId) {
+    void accept(AcceptCommand cmd, String userId, UUID workitemId) {
         Vision vision = Vision.get(cmd.id)
 
         if (!vision) {
             throw new NotFoundException()
         }
 
-        if (!vision.allowAction(AuditAction.ACCEPT)) {
+        if (!domainStateMachineHandler.canAccept(vision)) {
             throw new BadRequestException()
         }
 
-        String activity
-        String toUserId
-        switch (vision.status) {
-            case AuditStatus.COMMITTED: // check
-                if (!isChecker(cmd.id, userId)) {
-                    throw new ForbiddenException()
-                }
-                activity = Activities.APPROVE
-                toUserId = cmd.to
-                break
-            case AuditStatus.CHECKED:   // approve
-                if (!isApprover(cmd.id, userId)) {
-                    throw new ForbiddenException()
-                }
-                activity = Activities.VIEW
-                toUserId = workflowService.getCommitUser(vision.workflowInstance)
-                break
-            default:
-                throw new BadRequestException()
-        }
+        def activity = Workitem.get(workitemId).activitySuffix
+        checkReviewer(cmd.id, activity, userId)
 
-        AuditAction action = AuditAction.ACCEPT
-        vision.status = vision.nextStatus(action)
+        domainStateMachineHandler.accept(vision, userId, cmd.comment, workitemId, cmd.to)
+
         vision.save()
-
-        workflowService.setProcessed(workItemId)
-        workflowService.createWorkItem(vision.workflowInstance, activity, userId, action, cmd.comment, toUserId)
     }
 
     /**
@@ -104,67 +67,34 @@ class VisionReviewService {
      * @param userId 用户ID
      * @param workItemId 工作项ID
      */
-    void reject(RejectCommand cmd, String userId, UUID workItemId) {
+    void reject(RejectCommand cmd, String userId, UUID workitemId) {
         Vision vision = Vision.get(cmd.id)
 
         if (!vision) {
             throw new NotFoundException()
         }
 
-        if (!vision.allowAction(AuditAction.REJECT)) {
+        if (!domainStateMachineHandler.canReject(vision)) {
             throw new BadRequestException()
         }
 
-        switch (vision.status) {
-            case AuditStatus.COMMITTED: // check
-                if (!isChecker(cmd.id, userId)) {
-                    throw new ForbiddenException()
-                }
-                break
-            case AuditStatus.CHECKED:   // approve
-                if (!isApprover(cmd.id, userId)) {
-                    throw new ForbiddenException()
-                }
-                break
+        def activity = Workitem.get(workitemId).activitySuffix
+        checkReviewer(cmd.id, activity, userId)
+
+        domainStateMachineHandler.reject(vision, userId, cmd.comment, workitemId)
+
+        vision.save()
+    }
+
+    @Override
+    List<Map> getReviewers(String activity, Long id) {
+        switch (activity) {
+            case Activities.CHECK:
+                return visionDraftService.getCheckers(id)
+            case Activities.APPROVE:
+                return User.findAllWithPermission('PERM_VISION_APPROVE')
             default:
                 throw new BadRequestException()
         }
-
-        def action = AuditAction.REJECT
-        vision.status = vision.nextStatus(action)
-        vision.save()
-
-        workflowService.setProcessed(workItemId)
-        def toUserId = workflowService.getCommitUser(vision.workflowInstance)
-        workflowService.createWorkItem(vision.workflowInstance, Activities.VIEW, userId, action, cmd.comment, toUserId)
-    }
-
-    /**
-     * 获取审批人
-     * @param id Vision ID
-     * @return 审批人列表
-     */
-    List getApprovers(Long id) {
-        User.findAllWithPermission('PERM_VISION_APPROVE')
-    }
-
-    /**
-     * 是否为审核人
-     * @param id Vision ID
-     * @param userId 用户ID
-     * @return 是否为审核人
-     */
-    private boolean isChecker(Long id, String userId) {
-        visionDraftService.getCheckers(id).collect{it.id}.contains(userId)
-    }
-
-    /**
-     * 是否为审批人
-     * @param id Vision ID
-     * @param userId 用户ID
-     * @return 是否为审批人
-     */
-    private boolean isApprover(Long id, String userId) {
-        getApprovers(id).collect{it.id}.contains(userId)
     }
 }

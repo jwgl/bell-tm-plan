@@ -3,9 +3,10 @@ package cn.edu.bnuz.bell.planning
 import cn.edu.bnuz.bell.http.BadRequestException
 import cn.edu.bnuz.bell.http.ServiceExceptionHandler
 import cn.edu.bnuz.bell.security.SecurityService
-import cn.edu.bnuz.bell.workflow.AcceptCommand
-import cn.edu.bnuz.bell.workflow.AuditAction
-import cn.edu.bnuz.bell.workflow.RejectCommand
+import cn.edu.bnuz.bell.workflow.Activities
+import cn.edu.bnuz.bell.workflow.Event
+import cn.edu.bnuz.bell.workflow.commands.AcceptCommand
+import cn.edu.bnuz.bell.workflow.commands.RejectCommand
 import org.springframework.security.access.prepost.PreAuthorize
 
 /**
@@ -36,15 +37,15 @@ class SchemeReviewController implements ServiceExceptionHandler {
      */
     def patch(Long schemePublicId, String id, String op) {
         def userId = securityService.userId
-        def operation = AuditAction.valueOf(op)
+        def operation = Event.valueOf(op)
         switch (operation) {
-            case AuditAction.ACCEPT:
+            case Event.ACCEPT:
                 def cmd = new AcceptCommand()
                 bindData(cmd, request.JSON)
                 cmd.id = schemePublicId
                 schemeReviewService.accept(cmd, userId, UUID.fromString(id))
                 break
-            case AuditAction.REJECT:
+            case Event.REJECT:
                 def cmd = new RejectCommand()
                 bindData(cmd, request.JSON)
                 cmd.id = schemePublicId
@@ -63,6 +64,6 @@ class SchemeReviewController implements ServiceExceptionHandler {
      * @return 批准人列表
      */
     def approvers(Long schemePublicId) {
-        renderJson schemeReviewService.getApprovers(schemePublicId)
+        renderJson schemeReviewService.getReviewers(Activities.APPROVE, schemePublicId)
     }
 }

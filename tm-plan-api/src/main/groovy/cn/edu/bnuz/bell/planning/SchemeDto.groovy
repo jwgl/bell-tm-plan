@@ -1,12 +1,14 @@
 package cn.edu.bnuz.bell.planning
 
-import cn.edu.bnuz.bell.workflow.AuditStatus
+import cn.edu.bnuz.bell.workflow.State
+import cn.edu.bnuz.bell.workflow.StateObject
+import cn.edu.bnuz.bell.workflow.WorkflowInstance
 
 /**
  * Scheme DTO
  * @author Yang Lin
  */
-class SchemeDto {
+class SchemeDto implements StateObject {
     Long id
     Integer versionNumber
     Long previousId
@@ -18,12 +20,12 @@ class SchemeDto {
     String departmentName
     Integer grade
     Integer credit
-    AuditStatus status
+    State status
     UUID workflowInstanceId
 
     Boolean editable
     Boolean revisable
-    String reviewType
+    String activity
 
     List courses
     List tempCourses
@@ -42,7 +44,7 @@ class SchemeDto {
             String departmentName,
             Integer grade,
             Integer credit,
-            AuditStatus status,
+            State status,
             UUID workflowInstanceId) {
         this.id = id
         this.versionNumber = versionNumber
@@ -76,5 +78,20 @@ class SchemeDto {
         this.credit = credit
         this.versionNumber = Scheme.INITIAL_VERSION
         this.previousVersionNumber = 0
+    }
+
+    @Override
+    WorkflowInstance getWorkflowInstance() {
+        return null
+    }
+
+    @Override
+    void setWorkflowInstance(WorkflowInstance workflowInstance) {
+
+    }
+
+    @Override
+    String getWorkflowId() {
+        return null
     }
 }

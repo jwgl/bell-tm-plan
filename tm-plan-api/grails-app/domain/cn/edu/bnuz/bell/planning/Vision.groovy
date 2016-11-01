@@ -1,14 +1,15 @@
 package cn.edu.bnuz.bell.planning
 
-import cn.edu.bnuz.bell.workflow.AuditAction
-import cn.edu.bnuz.bell.workflow.AuditStatus
+import cn.edu.bnuz.bell.workflow.StateObject
+import cn.edu.bnuz.bell.workflow.State
+import cn.edu.bnuz.bell.workflow.StateUserType
 import cn.edu.bnuz.bell.workflow.WorkflowInstance
 
 /**
  * 培养方案-目标与规格
  * @author Yang Lin
  */
-class Vision {
+class Vision implements StateObject {
     /**
      * 教学计划
      */
@@ -27,7 +28,7 @@ class Vision {
     /**
      * 状态-0：新建；1-待审核；2-待审批；3：不通过；4：通过
      */
-    AuditStatus status
+    State status
 
     /**
      * 培养目标
@@ -65,7 +66,7 @@ class Vision {
         id                  generator: 'identity', comment: '培养方案-目标与规格ID'
         program             type: 'integer', comment: '教学计划'
         versionNumber       comment: '版本号'
-        status              defaultValue: "0", comment: '状态-0：新建；1-待审核；2-待审批；3：不通过；4：通过'
+        status              sqlType: 'state', type: StateUserType, comment: '状态'
         objective           length: 2000, comment: '培养目标'
         specification       length: 2000, comment: '培养要求'
         schoolingLength     length: 2000, comment: '学制'
@@ -75,18 +76,10 @@ class Vision {
     }
 
     static constraints = {
-        schoolingLength      nullable: true, maxSize: 2000
-        awardedDegree        nullable: true, maxSize: 1000
+        schoolingLength      nullable: true
+        awardedDegree        nullable: true
         previous             nullable: true
         workflowInstance     nullable: true
-    }
-
-    Boolean allowAction(AuditAction action) {
-        this.status.allow(action)
-    }
-
-    AuditStatus nextStatus(AuditAction action) {
-        this.status.next(action)
     }
 
     String getWorkflowId() {

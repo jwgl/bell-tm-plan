@@ -20,7 +20,7 @@ class UrlMappings {
         "/departments"(resources: 'department', includes: []) {
             "/visions"(controller: 'visionPublic', action: 'indexByDepartment', method: 'GET')
             "/schemes"(controller: 'schemePublic', action: 'indexByDepartment', method: 'GET')
-            "/schemeDirections"(controller: 'schemePublic', action: 'schemeDirectionsByDepartment', method: 'GET')
+            "/directions"(controller: 'schemePublic', action: 'directionsByDepartment', method: 'GET')
         }
 
         // 培养方案

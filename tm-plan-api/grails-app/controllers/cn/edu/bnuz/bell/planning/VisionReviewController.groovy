@@ -3,9 +3,10 @@ package cn.edu.bnuz.bell.planning
 import cn.edu.bnuz.bell.http.BadRequestException
 import cn.edu.bnuz.bell.http.ServiceExceptionHandler
 import cn.edu.bnuz.bell.security.SecurityService
-import cn.edu.bnuz.bell.workflow.AcceptCommand
-import cn.edu.bnuz.bell.workflow.AuditAction
-import cn.edu.bnuz.bell.workflow.RejectCommand
+import cn.edu.bnuz.bell.workflow.Activities
+import cn.edu.bnuz.bell.workflow.Event
+import cn.edu.bnuz.bell.workflow.commands.AcceptCommand
+import cn.edu.bnuz.bell.workflow.commands.RejectCommand
 import org.springframework.security.access.prepost.PreAuthorize
 
 /**
@@ -34,15 +35,15 @@ class VisionReviewController implements ServiceExceptionHandler {
      */
     def patch(Long visionPublicId, String id, String op) {
         def userId = securityService.userId
-        def operation = AuditAction.valueOf(op)
+        def operation = Event.valueOf(op)
         switch (operation) {
-            case AuditAction.ACCEPT:
+            case Event.ACCEPT:
                 def cmd = new AcceptCommand()
                 bindData(cmd, request.JSON)
                 cmd.id = visionPublicId
                 visionReviewService.accept(cmd, userId, UUID.fromString(id))
                 break
-            case AuditAction.REJECT:
+            case Event.REJECT:
                 def cmd = new RejectCommand()
                 bindData(cmd, request.JSON)
                 cmd.id = visionPublicId
@@ -61,6 +62,6 @@ class VisionReviewController implements ServiceExceptionHandler {
      * @return 批准人列表
      */
     def approvers(Long visionPublicId) {
-        renderJson visionReviewService.getApprovers(visionPublicId)
+        renderJson visionReviewService.getReviewers(Activities.APPROVE, visionPublicId)
     }
 }
