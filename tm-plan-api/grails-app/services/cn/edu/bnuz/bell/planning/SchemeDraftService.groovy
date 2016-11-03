@@ -3,16 +3,14 @@ package cn.edu.bnuz.bell.planning
 import cn.edu.bnuz.bell.http.BadRequestException
 import cn.edu.bnuz.bell.http.ForbiddenException
 import cn.edu.bnuz.bell.http.NotFoundException
-import cn.edu.bnuz.bell.master.TermService
 import cn.edu.bnuz.bell.organization.Department
 import cn.edu.bnuz.bell.security.User
-import cn.edu.bnuz.bell.security.UserLogService
 import cn.edu.bnuz.bell.service.DataAccessService
+import cn.edu.bnuz.bell.tm.common.master.TermService
 import cn.edu.bnuz.bell.utils.CollectionUtils
 import cn.edu.bnuz.bell.utils.GroupCondition
 import cn.edu.bnuz.bell.workflow.DomainStateMachineHandler
 import cn.edu.bnuz.bell.workflow.State
-import cn.edu.bnuz.bell.workflow.WorkflowService
 import cn.edu.bnuz.bell.workflow.commands.SubmitCommand
 import grails.compiler.GrailsCompileStatic
 import grails.transaction.Transactional
@@ -27,8 +25,6 @@ import groovy.transform.TypeCheckingMode
 class SchemeDraftService {
     SchemePublicService schemePublicService
     ProgramService programService
-    UserLogService userLogService
-    WorkflowService workflowService
     DataAccessService dataAccessService
     TermService termService
     DomainStateMachineHandler domainStateMachineHandler

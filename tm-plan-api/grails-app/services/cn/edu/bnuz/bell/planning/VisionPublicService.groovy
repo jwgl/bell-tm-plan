@@ -1,8 +1,7 @@
 package cn.edu.bnuz.bell.planning
 
 import cn.edu.bnuz.bell.http.NotFoundException
-import cn.edu.bnuz.bell.master.TermService
-import cn.edu.bnuz.bell.service.DataAccessService
+import cn.edu.bnuz.bell.tm.common.master.TermService
 import cn.edu.bnuz.bell.utils.CollectionUtils
 import cn.edu.bnuz.bell.utils.GroupCondition
 import cn.edu.bnuz.bell.workflow.State
@@ -14,7 +13,6 @@ import cn.edu.bnuz.bell.workflow.State
 class VisionPublicService {
     SchemePublicService schemePublicService
     TermService termService
-    DataAccessService dataAccessService
 
     /**
      * 获取已审核培养方案（除专升本和课程班）
