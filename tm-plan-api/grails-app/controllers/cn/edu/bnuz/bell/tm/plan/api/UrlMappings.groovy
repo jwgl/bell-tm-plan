@@ -3,7 +3,7 @@ package cn.edu.bnuz.bell.tm.plan.api
 class UrlMappings {
 
     static mappings = {
-        // 按用户获取信息
+        // 编辑
         "/users"(resources: 'user', includes: []) {
             "/visions"(resources: 'visionDraft') {
                 "/checkers"(controller: 'visionDraft', action: 'checkers', method: 'GET')
@@ -16,30 +16,37 @@ class UrlMappings {
             }
         }
 
-        // 按学院获取信息
+        // 学院管理
         "/departments"(resources: 'department', includes: []) {
-            "/visions"(controller: 'visionPublic', action: 'indexByDepartment', method: 'GET')
-            "/schemes"(controller: 'schemePublic', action: 'indexByDepartment', method: 'GET')
-            "/directions"(controller: 'schemePublic', action: 'directionsByDepartment', method: 'GET')
+            "/visions"(controller: 'visionDepartment', action: 'index', method: 'GET')
+            "/schemes"(controller: 'schemeDepartment', action: 'index', method: 'GET')
+            "/directions"(controller: 'schemeDepartment', action: 'directions', method: 'GET')
         }
 
-        // 培养方案
-        "/visions"(resources: 'visionPublic', includes: ['index', 'show']) {
+        // 培养方案管理
+        "/visions"(resources: 'visionAdmin', includes: ['index', 'show']) {
             "/reviews"(resources: 'visionReview', includes: ['show', 'patch']) {
                 "/approvers"(controller: 'visionReview', action: 'approvers', method: 'GET')
             }
         }
 
-        // 教学计划
-        "/schemes"(resources: 'schemePublic', includes: ['index', 'show']) {
+        // 教学计划管理
+        "/schemes"(resources: 'schemeAdmin', includes: ['index', 'show']) {
             "/reviews"(resources: 'schemeReview', includes: ['show', 'patch']) {
                 "/approvers"(controller: 'schemeReview', action: 'approvers', method: 'GET')
             }
-            "/properties"(resources: 'property', includes: []) {
-                "/courses"(controller: 'schemePublic', action: 'propertyCourses', method: 'GET')
-            }
-            "/directions"(resources: 'direction', includes: []) {
-                "/courses"(controller: 'schemePublic', action: 'directionCourses', method: 'GET')
+        }
+
+        // 公共视图
+        group "/public", {
+            "/visions"(resources: 'visionPublic', includes: ['index', 'show'])
+            "/schemes"(resources: 'schemePublic', includes: ['index', 'show']) {
+                "/properties"(resources: 'property', includes: []) {
+                    "/courses"(controller: 'schemePublic', action: 'propertyCourses', method: 'GET')
+                }
+                "/directions"(resources: 'direction', includes: []) {
+                    "/courses"(controller: 'schemePublic', action: 'directionCourses', method: 'GET')
+                }
             }
         }
 
