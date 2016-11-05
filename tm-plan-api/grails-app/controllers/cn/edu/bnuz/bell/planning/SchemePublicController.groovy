@@ -15,21 +15,8 @@ class SchemePublicController implements ServiceExceptionHandler {
         renderJson schemePublicService.getSchemes()
     }
 
-    /**
-     * 按学院获取教学计划列表
-     * EndPoint /departments/01/schemes
-     * @param id 学院ID
-     */
-    def indexByDepartment(String departmentId) {
-        renderJson schemePublicService.getSchemesByDepartment(departmentId)
-    }
-
     def show(Long id) {
         renderJson schemePublicService.getSchemeInfo(id)
-    }
-
-    def directionsByDepartment(String departmentId) {
-        renderJson schemePublicService.getDirectionsByDepartment(departmentId)
     }
 
     def propertyCourses(Long schemePublicId, Integer propertyId) {

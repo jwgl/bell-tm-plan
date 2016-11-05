@@ -74,37 +74,6 @@ order by department.id, subject.id, major.grade
     }
 
     /**
-     * 按学院获取列表
-     * @param departmentId 学院ID
-     */
-    def getVisionsByDepartment(String departmentId) {
-        def startGrade = termService.minInSchoolGrade
-        Vision.executeQuery '''
-select new map(
-  v.id as id,
-  subject.name as subjectName,
-  major.grade as grade
-)
-from Vision v
-join v.program program
-join program.major major
-join major.subject subject
-join subject.department department
-where subject.isTopUp = false
-and major.degree is not null
-and major.grade >= :startGrade
-and department.id = :departmentId
-and v.versionNumber = (
-  select max(v2.versionNumber)
-  from Vision v2
-  where v2.status = :status
-  and v2.program = v.program
-)
-order by major.grade desc, subject.id
-''', [startGrade: startGrade, departmentId: departmentId, status: State.APPROVED]
-    }
-
-    /**
      * 获取指定的培养方案信息（用于显示）。
      * @param id 培养方案ID
      * @return 培养方案信息

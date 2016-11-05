@@ -3,28 +3,32 @@ package cn.edu.bnuz.bell.tm.plan.web
 class UrlMappings {
 
     static mappings = {
-        "/visions"(resources:'visionPublic', includes: ['index', 'show']) {
+        "/visions"(resources:'visionAdmin', includes: ['index']) {
             "/reviews"(resources: 'visionReview', includes:['show'])
         }
 
-        "/schemes"(resources: 'schemePublic', includes: ['index', 'show']) {
+        "/schemes"(resources: 'schemeAdmin', includes: ['index']) {
             "/reviews"(resources: 'schemeReview', includes:['show'])
         }
 
-        "/users"(resources: 'user') {
+        "/departments"(resources: 'department', includes: []) {
+            "/visions"(resources: 'visionDepartment', includes: ['index'])
+            "/schemes"(resources: 'schemeDepartment', includes: ['index'])
+        }
+
+        "/users"(resources: 'user', includes: []) {
             "/visions"(resources: 'visionDraft', includes: ['index'])
             "/schemes"(resources: 'schemeDraft', includes: ['index'])
+        }
+
+        group "/public", {
+            "/visions"(resources:'visionPublic', includes: ['index', 'show'])
+            "/schemes"(resources: 'schemePublic', includes: ['index', 'show'])
         }
 
         group "/settings", {
             "/subject"(controller: "subjectSetup")
             "/program"(controller: "programSetup")
-        }
-
-        "/$controller/$action?/$id?(.$format)?"{
-            constraints {
-                // apply constraints here
-            }
         }
 
         "500"(view:'/error')
