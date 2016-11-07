@@ -5,6 +5,6 @@
     <asset:script src="/static/js/app/plan/scheme/review.js"></asset:script>
 </head>
 <body>
-    <scheme-review id="${params.schemePublicId}" wi="${params.id}"></scheme-review>
+    <scheme-review id="${params.schemeAdminId}" wi="${params.id}"></scheme-review>
 </body>
 </html>

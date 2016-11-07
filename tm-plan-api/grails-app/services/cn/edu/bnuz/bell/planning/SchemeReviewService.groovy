@@ -30,6 +30,12 @@ class SchemeReviewService extends AbstractReviewService {
      */
     def getSchemeForReview(Long id, String userId, UUID workitemId) {
         def scheme = schemePublicService.getSchemeInfo(id)
+
+        // 除获取当前指定版本数据外，还需查询出被当前版本修改的项
+        if (scheme.previousId) {
+            scheme.courses.addAll(schemePublicService.getRevisedSchemeCoursesInfo(id))
+        }
+
         def activity = Workitem.get(workitemId).activitySuffix
         checkReviewer(id, activity, userId)
         scheme.activity = activity
