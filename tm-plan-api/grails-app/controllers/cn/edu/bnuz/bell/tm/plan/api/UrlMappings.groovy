@@ -18,9 +18,17 @@ class UrlMappings {
 
         // 学院管理
         "/departments"(resources: 'department', includes: []) {
-            "/visions"(controller: 'visionDepartment', action: 'index', method: 'GET')
-            "/schemes"(controller: 'schemeDepartment', action: 'index', method: 'GET')
-            "/directions"(controller: 'schemeDepartment', action: 'directions', method: 'GET')
+            "/visions"(resources: 'visionDepartment', includes: ['index']) {
+                collection {
+                    "/latest"(controller: 'visionDepartment', action: 'latest', method: 'GET')
+                }
+            }
+            "/schemes"(resources: 'schemeDepartment', includes: ['index', 'show']) {
+                collection {
+                    "/latest"(controller: 'schemeDepartment', action: 'latest', method: 'GET')
+                    "/directions"(controller: 'schemeDepartment', action: 'directions', method: 'GET')
+                }
+            }
         }
 
         // 培养方案管理
