@@ -48,10 +48,10 @@ class Scheme implements StateObject {
         comment             '教学计划'
         dynamicUpdate       true
         id                  generator: 'identity', comment: '培养方案-教学安排ID'
-        versionNumber       comment: '版本号'
+        versionNumber       unique: ['program'], comment: '版本号'
         status              sqlType: 'state', type: StateUserType, comment: '状态'
         program             comment: '教学计划'
-        previous            comment: '上一版本'
+        previous            unique: ['program'], comment: '上一版本'
         workflowInstance    comment: '工作流实例'
         courses             cascade: 'all-delete-orphan'
         tempCourses         cascade: 'all-delete-orphan'

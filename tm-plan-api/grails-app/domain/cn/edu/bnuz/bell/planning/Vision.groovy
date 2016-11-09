@@ -65,13 +65,13 @@ class Vision implements StateObject {
         dynamicUpdate       true
         id                  generator: 'identity', comment: '培养方案-目标与规格ID'
         program             type: 'integer', comment: '教学计划'
-        versionNumber       comment: '版本号'
+        versionNumber       unique: ['program'], comment: '版本号'
         status              sqlType: 'state', type: StateUserType, comment: '状态'
         objective           length: 2000, comment: '培养目标'
         specification       length: 2000, comment: '培养要求'
         schoolingLength     length: 2000, comment: '学制'
         awardedDegree       length: 1000, comment: '授予学位'
-        previous            comment: '上一版本'
+        previous            unique: ['program'], comment: '上一版本'
         workflowInstance    comment: '工作流实例'
     }
 
