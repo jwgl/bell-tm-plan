@@ -1,8 +1,8 @@
 menuGroup 'main', {
     program 10, {
         settings         10, {
-            subject      10, 'PERM_SUBJECT_SETUP',      '/web/plan/settings/subject'
-            program      20, 'PERM_PROGRAM_SETUP',      '/web/plan/settings/program'
+            subject      10, 'PERM_SUBJECT_SETUP',      '/web/plan/settings/subjects'
+            program      20, 'PERM_PROGRAM_SETUP',      '/web/plan/settings/programs'
         }
         visionList       20, 'PERM_VISION_READ',        '/web/plan/public/visions'
         visionDrafts     21, 'PERM_VISION_WRITE',       '/web/plan/users/${userId}/visions'

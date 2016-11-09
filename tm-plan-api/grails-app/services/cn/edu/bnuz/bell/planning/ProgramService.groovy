@@ -13,10 +13,10 @@ class ProgramService {
 select p.id
 from Program p
 join p.major m,
-SubjectDirector sd
-where m.subject = sd.subject
+SubjectSettings ss
+where m.subject = ss.subject
 and p.id = :programId
-and sd.teacher.id = :userId
+and ss.director.id = :userId
 ''', [programId: programId, userId: userId]
     }
 

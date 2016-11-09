@@ -61,11 +61,9 @@ class UrlMappings {
         // 教学计划模板
         "/schemeTemplates"(resources: 'schemeTemplate', includes: ['index'])
 
-        // 专业负责人
-        "/subjectDirectors"(resources: 'subjectDirector', includes: ['index', 'save'])
-
-        // 计划设置
-        "/programSettings"(resources: 'programSettings', includes: ['index', 'update']) {
+        // 设置
+        "/settings/subjects"(resources: 'subjectSettings', includes: ['index', 'update'])
+        "/settings/programs"(resources: 'programSettings', includes: ['index', 'update']) {
             collection {
                 "/grades"(controller: 'programSettings', action: 'grades', method: 'GET')
             }
