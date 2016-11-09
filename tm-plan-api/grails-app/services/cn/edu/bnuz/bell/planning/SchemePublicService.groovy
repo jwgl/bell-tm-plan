@@ -177,7 +177,12 @@ select new map(
 )
 from SchemeTempCourse sc
 join sc.tempCourse c
-where sc.scheme.id = :schemeId
+join sc.scheme s,
+Scheme scheme
+where scheme.id = :schemeId
+and s.program = scheme.program
+and s.versionNumber <= scheme.versionNumber
+and (sc.reviseVersion is null or sc.reviseVersion > scheme.versionNumber)
 ''', [schemeId: schemeId]
     }
 
@@ -213,6 +218,42 @@ join sc.scheme s,
 Scheme scheme
 where scheme.id = :schemeId
 and s.program =  scheme.program
+and sc.reviseVersion = scheme.versionNumber
+''', [schemeId: schemeId]
+    }
+
+    /**
+     * 获取当前计划版本修订的临时课程信息
+     * @param schemeId Scheme ID
+     * @return 临时课程信息列表
+     */
+    List getRevisedSchemeTempCoursesInfo(Long schemeId) {
+        SchemeTempCourse.executeQuery '''
+select new map(
+  sc.id as id,
+  c.id as courseId,
+  c.name as courseName,
+  c.credit as credit,
+  sc.property.id as propertyId,
+  sc.direction.id as directionId,
+  sc.practiceCredit as practiceCredit,
+  sc.period.theory as theoryPeriod,
+  sc.period.experiment as experimentPeriod,
+  sc.period.weeks as periodWeeks,
+  sc.assessType as assessType,
+  sc.suggestedTerm as suggestedTerm,
+  sc.allowedTerm as allowedTerm,
+  sc.courseGroup as courseGroup,
+  sc.scheme.id as schemeId,
+  sc.reviseVersion as reviseVersion,
+  sc.previous.id as previousId
+)
+from SchemeTempCourse sc
+join sc.tempCourse c
+join sc.scheme s,
+Scheme scheme
+where scheme.id = :schemeId
+and s.program = scheme.program
 and sc.reviseVersion = scheme.versionNumber
 ''', [schemeId: schemeId]
     }

@@ -100,6 +100,7 @@ order by subject.id, major.grade desc, s.versionNumber desc
         // 除获取当前指定版本数据外，还需查询出被当前版本修改的项
         if (scheme.previousId) {
             scheme.courses.addAll(schemePublicService.getRevisedSchemeCoursesInfo(id))
+            scheme.tempCourses.addAll(schemePublicService.getRevisedSchemeTempCoursesInfo(id))
         }
 
         if (domainStateMachineHandler.canUpdate(scheme)) {
@@ -131,6 +132,7 @@ order by subject.id, major.grade desc, s.versionNumber desc
         // 除获取当前指定版本数据外，还需查询出被当前版本修改的项
         if (scheme.previousId) {
             scheme.courses.addAll(schemePublicService.getRevisedSchemeCoursesInfo(id))
+            scheme.tempCourses.addAll(schemePublicService.getRevisedSchemeTempCoursesInfo(id))
         }
 
         return scheme
