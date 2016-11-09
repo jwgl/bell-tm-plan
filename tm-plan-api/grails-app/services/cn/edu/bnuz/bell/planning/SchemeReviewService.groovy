@@ -34,6 +34,7 @@ class SchemeReviewService extends AbstractReviewService {
         // 除获取当前指定版本数据外，还需查询出被当前版本修改的项
         if (scheme.previousId) {
             scheme.courses.addAll(schemePublicService.getRevisedSchemeCoursesInfo(id))
+            scheme.tempCourses.addAll(schemePublicService.getRevisedSchemeTempCoursesInfo(id))
         }
 
         def activity = Workitem.get(workitemId).activitySuffix
