@@ -52,9 +52,9 @@ where subject.isTopUp = false
 and major.degree is not null
 and major.grade >= :startGrade
 and subject.id in (
-  select sd.subject.id
-  from SubjectDirector sd
-  where sd.teacher.id = :userId
+  select ss.subject.id
+  from SubjectSettings ss
+  where ss.director.id = :userId
 )
 order by subject.id, major.grade desc, v.versionNumber desc
 ''', [startGrade: startGrade, userId: userId]

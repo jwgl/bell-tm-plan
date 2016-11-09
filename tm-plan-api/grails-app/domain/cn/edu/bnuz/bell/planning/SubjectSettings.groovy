@@ -4,10 +4,9 @@ import cn.edu.bnuz.bell.master.Subject
 import cn.edu.bnuz.bell.organization.Teacher
 
 /**
- * 专业负责人
- * @author Yang Lin
+ * 校内专业设置
  */
-class SubjectDirector {
+class SubjectSettings {
     /**
      * 虚拟ID，对应属性#subject
      */
@@ -15,20 +14,31 @@ class SubjectDirector {
 
     /**
      * 校内专业
-    */
+     */
     Subject subject
 
     /**
-    * 专业负责人
-    */
-    Teacher teacher
+     * 专业负责人
+     */
+    Teacher director
+
+    /**
+     * 学院教务秘书
+     */
+    Teacher secretary
 
     static belongsTo = [subject: Subject]
 
     static mapping = {
-        comment        '专业负责人'
+        comment        '校内专业设置'
         id             column: 'subject_id', type: 'string', sqlType: 'varchar(4)', generator: 'foreign', params: [ property: 'subject']
         subject        comment: '校内专业', insertable: false, updateable: false
-        teacher        comment: '专业负责人'
+        director       comment: '专业负责人'
+        secretary      comment: '学院教务秘书'
+    }
+
+    static constraints = {
+        director       nullable: true
+        secretary      nullable: true
     }
 }

@@ -27,8 +27,8 @@ class UrlMappings {
         }
 
         group "/settings", {
-            "/subject"(controller: "subjectSetup")
-            "/program"(controller: "programSetup")
+            "/subjects"(controller: "subjectSettings")
+            "/programs"(controller: "programSettings")
         }
 
         "500"(view:'/error')
