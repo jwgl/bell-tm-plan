@@ -79,7 +79,7 @@ endpoints:
 
 ---
 server:
-    port: 50310
+    port: 12110
 
 spring:
     application:
