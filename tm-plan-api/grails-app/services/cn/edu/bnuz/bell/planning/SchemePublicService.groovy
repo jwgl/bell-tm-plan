@@ -104,6 +104,7 @@ left join scheme.previous prev
 where scheme.id = :id
 ''', [id: id]
 
+        scheme.latest = getLatestSchemeId(scheme.programId) == scheme.id
         scheme.courses = getSchemeCoursesInfo(id)
         scheme.tempCourses = getSchemeTempCoursesInfo(id)
         scheme.template = programService.getSchemeTemplateInfo(scheme.programId)

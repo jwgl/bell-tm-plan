@@ -27,6 +27,8 @@ class SchemeDto implements StateObject {
     Boolean revisable
     String activity
 
+    Boolean latest
+
     List courses
     List tempCourses
     Map template

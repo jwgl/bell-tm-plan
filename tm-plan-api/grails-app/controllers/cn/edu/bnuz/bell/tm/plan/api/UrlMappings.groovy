@@ -24,6 +24,7 @@ class UrlMappings {
                 }
             }
             "/schemes"(resources: 'schemeDepartment', includes: ['index', 'show']) {
+                "/toes"(resources: 'schemeToes', includes: ['index', 'save'])
                 collection {
                     "/latest"(controller: 'schemeDepartment', action: 'latest', method: 'GET')
                     "/directions"(controller: 'schemeDepartment', action: 'directions', method: 'GET')
