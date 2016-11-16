@@ -1,6 +1,5 @@
 package cn.edu.bnuz.bell.planning
 
-import cn.edu.bnuz.bell.http.BadRequestException
 import cn.edu.bnuz.bell.http.ForbiddenException
 import cn.edu.bnuz.bell.tm.common.master.TermService
 import cn.edu.bnuz.bell.workflow.State
