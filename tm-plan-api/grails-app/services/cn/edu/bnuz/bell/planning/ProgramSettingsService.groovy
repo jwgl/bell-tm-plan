@@ -31,6 +31,7 @@ select new Map(
     st.name as templateName,
     ps.schemeTemplateLocked as templateLocked,
     ps.schemeRevisible as schemeRevisible,
+    ps.schemeExportable as schemeExportable,
     ps.practiceCreditRatio as practiceCreditRatio
 )
 from ProgramSettings ps
@@ -70,6 +71,7 @@ join p.major m
         programSettings.visionRevisible = cmd.visionRevisible
         programSettings.schemeTemplateLocked = cmd.templateLocked
         programSettings.schemeRevisible = cmd.schemeRevisible
+        programSettings.schemeExportable = cmd.schemeExportable
         programSettings.schemeTemplate = SchemeTemplate.load(cmd.templateId)
         programSettings.practiceCreditRatio = cmd.practiceCreditRatio
         programSettings.save()

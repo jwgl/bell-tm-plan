@@ -103,7 +103,7 @@ order by subject.id, major.grade desc, s.versionNumber desc
             scheme.tempCourses.addAll(schemePublicService.getRevisedSchemeTempCoursesInfo(id))
         }
 
-        if (domainStateMachineHandler.canUpdate(scheme)) {
+        if (domainStateMachineHandler.canUpdate(scheme as SchemeDto.SchemeDtoStateObject)) {
             scheme.editable = true
         } else if (canRevise(id)) {
             scheme.revisable = true
@@ -125,7 +125,7 @@ order by subject.id, major.grade desc, s.versionNumber desc
             throw new ForbiddenException()
         }
 
-        if (!domainStateMachineHandler.canUpdate(scheme)) {
+        if (!domainStateMachineHandler.canUpdate(scheme as SchemeDto.SchemeDtoStateObject)) {
             throw new BadRequestException()
         }
 
