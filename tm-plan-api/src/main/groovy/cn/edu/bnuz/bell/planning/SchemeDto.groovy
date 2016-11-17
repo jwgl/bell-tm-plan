@@ -8,7 +8,7 @@ import cn.edu.bnuz.bell.workflow.WorkflowInstance
  * Scheme DTO
  * @author Yang Lin
  */
-class SchemeDto implements StateObject {
+class SchemeDto  {
     Long id
     Integer versionNumber
     Long previousId
@@ -82,18 +82,19 @@ class SchemeDto implements StateObject {
         this.previousVersionNumber = 0
     }
 
-    @Override
-    WorkflowInstance getWorkflowInstance() {
-        return null
-    }
+    trait SchemeDtoStateObject implements StateObject {
+        @Override
+        WorkflowInstance getWorkflowInstance() {
+            return null
+        }
 
-    @Override
-    void setWorkflowInstance(WorkflowInstance workflowInstance) {
+        @Override
+        void setWorkflowInstance(WorkflowInstance workflowInstance) {
+        }
 
-    }
-
-    @Override
-    String getWorkflowId() {
-        return null
+        @Override
+        String getWorkflowId() {
+            return null
+        }
     }
 }

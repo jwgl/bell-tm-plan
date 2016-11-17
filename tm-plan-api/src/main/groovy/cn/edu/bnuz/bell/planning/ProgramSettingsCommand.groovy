@@ -11,5 +11,6 @@ class ProgramSettingsCommand {
     Integer templateId
     Boolean templateLocked
     Boolean schemeRevisible
+    Boolean schemeExportable
     BigDecimal practiceCreditRatio
 }
