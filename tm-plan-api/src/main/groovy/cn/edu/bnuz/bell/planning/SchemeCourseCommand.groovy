@@ -20,8 +20,8 @@ class SchemeCourseCommand {
     String courseId
     Boolean isPractical
     BigDecimal practiceCredit
-    Integer theoryPeriod
-    Integer experimentPeriod
+    BigDecimal theoryPeriod
+    BigDecimal experimentPeriod
     Integer periodWeeks
     Integer assessType
     Integer suggestedTerm

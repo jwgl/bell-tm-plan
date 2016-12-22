@@ -8,8 +8,8 @@ class SchemeCourseDto {
     String id
     String name
     BigDecimal credit
-    Integer theoryPeriod
-    Integer experimentPeriod
+    BigDecimal theoryPeriod
+    BigDecimal experimentPeriod
     Integer periodWeeks
     Boolean isPractical
     Integer educationLevel
