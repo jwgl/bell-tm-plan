@@ -2,8 +2,6 @@ package cn.edu.bnuz.bell.planning
 
 import cn.edu.bnuz.bell.http.ForbiddenException
 import cn.edu.bnuz.bell.http.NotFoundException
-import cn.edu.bnuz.bell.master.Major
-import cn.edu.bnuz.bell.master.Period
 import grails.transaction.Transactional
 
 @Transactional
