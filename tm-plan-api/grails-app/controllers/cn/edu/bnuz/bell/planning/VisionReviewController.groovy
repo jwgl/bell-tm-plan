@@ -20,33 +20,33 @@ class VisionReviewController implements ServiceExceptionHandler {
 
     /**
      * 审核显示
-     * @param visionPublicId Vision ID
+     * @param visionReviewId Vision ID
      * @param id Workitem ID
      */
-    def show(Long visionPublicId, String id) {
-        renderJson visionReviewService.getVisionForReview(visionPublicId, securityService.userId, UUID.fromString(id))
+    def show(Long visionReviewId, String id) {
+        renderJson visionReviewService.getVisionForReview(visionReviewId, securityService.userId, UUID.fromString(id))
     }
 
     /**
      * 处理同意/不同意
-     * @param visionPublicId Vision ID
+     * @param visionReviewId Vision ID
      * @param id Workitem ID
      * @param op 操作
      */
-    def patch(Long visionPublicId, String id, String op) {
+    def patch(Long visionReviewId, String id, String op) {
         def userId = securityService.userId
         def operation = Event.valueOf(op)
         switch (operation) {
             case Event.ACCEPT:
                 def cmd = new AcceptCommand()
                 bindData(cmd, request.JSON)
-                cmd.id = visionPublicId
+                cmd.id = visionReviewId
                 visionReviewService.accept(cmd, userId, UUID.fromString(id))
                 break
             case Event.REJECT:
                 def cmd = new RejectCommand()
                 bindData(cmd, request.JSON)
-                cmd.id = visionPublicId
+                cmd.id = visionReviewId
                 visionReviewService.reject(cmd, userId, UUID.fromString(id))
                 break
             default:
@@ -58,10 +58,10 @@ class VisionReviewController implements ServiceExceptionHandler {
 
     /**
      * 获取批准人
-     * @param visionPublicId Vision ID
+     * @param visionReviewId Vision ID
      * @return 批准人列表
      */
-    def approvers(Long visionPublicId) {
-        renderJson visionReviewService.getReviewers(Activities.APPROVE, visionPublicId)
+    def approvers(Long visionReviewId) {
+        renderJson visionReviewService.getReviewers(Activities.APPROVE, visionReviewId)
     }
 }
