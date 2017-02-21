@@ -3,12 +3,17 @@ package cn.edu.bnuz.bell.tm.plan.web
 class UrlMappings {
 
     static mappings = {
-        "/visions"(resources:'visionAdmin', includes: ['index']) {
-            "/reviews"(resources: 'visionReview', includes:['show'])
-        }
+        "/visions"(resources:'visionAdmin', includes: ['index'])
 
-        "/schemes"(resources: 'schemeAdmin', includes: ['index']) {
-            "/reviews"(resources: 'schemeReview', includes:['show'])
+        "/schemes"(resources: 'schemeAdmin', includes: ['index'])
+
+        "/reviewers"(resources: 'reviewer', includes: []) {
+            "/visions"(resources:'visionReview', includes: []) {
+                "/workitems"(resources: 'visionReview', includes: ['show'])
+            }
+            "/schemes"(resources: 'schemeReview', includes: []) {
+                "/workitems"(resources: 'schemeReview', includes: ['show'])
+            }
         }
 
         "/departments"(resources: 'department', includes: []) {

@@ -33,15 +33,19 @@ class UrlMappings {
         }
 
         // 培养方案管理
-        "/visions"(resources: 'visionAdmin', includes: ['index', 'show']) {
-            "/reviews"(resources: 'visionReview', includes: ['show', 'patch']) {
-                "/approvers"(controller: 'visionReview', action: 'approvers', method: 'GET')
-            }
-        }
+        "/visions"(resources: 'visionAdmin', includes: ['index', 'show'])
 
         // 教学计划管理
-        "/schemes"(resources: 'schemeAdmin', includes: ['index', 'show']) {
-            "/reviews"(resources: 'schemeReview', includes: ['show', 'patch']) {
+        "/schemes"(resources: 'schemeAdmin', includes: ['index', 'show'])
+
+        // 审核
+        "/reviewers"(resources: 'reviewer', includes: []) {
+            "/visions"(resources:'visionReview', includes: []) {
+                "/workitems"(resources: 'visionReview', includes: ['show', 'patch'])
+                "/approvers"(controller: 'visionReview', action: 'approvers', method: 'GET')
+            }
+            "/schemes"(resources: 'schemeReview', includes: []) {
+                "/workitems"(resources: 'schemeReview', includes: ['show', 'patch'])
                 "/approvers"(controller: 'schemeReview', action: 'approvers', method: 'GET')
             }
         }
