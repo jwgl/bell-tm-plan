@@ -23,12 +23,12 @@ class VisionReviewService extends AbstractReviewService {
 
     /**
      * 获取审核数据
-     * @param id Vision ID
      * @param userId 用户ID
+     * @param id Vision ID
      * @param workitemId 工作项ID
      * @return 审核数据
      */
-    def getVisionForReview(Long id, String userId, UUID workitemId) {
+    def getVisionForReview(String userId, Long id, UUID workitemId) {
         def vision = visionPublicService.getVisionInfo(id)
         def activity = Workitem.get(workitemId).activitySuffix
         checkReviewer(id, activity, userId)
@@ -38,11 +38,11 @@ class VisionReviewService extends AbstractReviewService {
 
     /**
      * 同意
-     * @param cmd 同意数据
      * @param userId 用户ID
+     * @param cmd 同意数据
      * @param workItemId 工作项ID
      */
-    void accept(AcceptCommand cmd, String userId, UUID workitemId) {
+    void accept(String userId, AcceptCommand cmd, UUID workitemId) {
         Vision vision = Vision.get(cmd.id)
 
         if (!vision) {
@@ -63,11 +63,11 @@ class VisionReviewService extends AbstractReviewService {
 
     /**
      * 不同意
-     * @param cmd 不同意数据
      * @param userId 用户ID
+     * @param cmd 不同意数据
      * @param workItemId 工作项ID
      */
-    void reject(RejectCommand cmd, String userId, UUID workitemId) {
+    void reject(String userId, RejectCommand cmd, UUID workitemId) {
         Vision vision = Vision.get(cmd.id)
 
         if (!vision) {
