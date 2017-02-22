@@ -23,12 +23,12 @@ class SchemeReviewService extends AbstractReviewService {
 
     /**
      * 获取审核数据
-     * @param id Scheme ID
      * @param userId 用户ID
+     * @param id Scheme ID
      * @param workitemId 工作项ID
      * @return 审核数据
      */
-    def getSchemeForReview(Long id, String userId, UUID workitemId) {
+    def getSchemeForReview(String userId, Long id, UUID workitemId) {
         def scheme = schemePublicService.getSchemeInfo(id)
 
         // 除获取当前指定版本数据外，还需查询出被当前版本修改的项
@@ -45,11 +45,11 @@ class SchemeReviewService extends AbstractReviewService {
 
     /**
      * 同意
-     * @param cmd 同意数据
      * @param userId 用户ID
+     * @param cmd 同意数据
      * @param workItemId 工作项ID
      */
-    void accept(AcceptCommand cmd, String userId, UUID workitemId) {
+    void accept(String userId, AcceptCommand cmd, UUID workitemId) {
         Scheme scheme = Scheme.get(cmd.id)
 
         if (!scheme) {
@@ -70,11 +70,11 @@ class SchemeReviewService extends AbstractReviewService {
 
     /**
      * 不同意
-     * @param cmd 不同意数据
      * @param userId 用户ID
+     * @param cmd 不同意数据
      * @param workItemId 工作项ID
      */
-    void reject(RejectCommand cmd, String userId, UUID workitemId) {
+    void reject(String userId, RejectCommand cmd, UUID workitemId) {
         Scheme scheme = Scheme.get(cmd.id)
 
         if (!scheme) {
