@@ -13,6 +13,8 @@ import org.springframework.security.access.prepost.PreAuthorize
 @PreAuthorize('hasAuthority("PERM_VISION_WRITE")')
 class VisionDraftController implements ServiceExceptionHandler{
     VisionDraftService visionDraftService
+    VisionReviewerService visionReviewerService
+
     /**
      * 编辑列表
      * @param userId 当前用户ID
@@ -129,6 +131,6 @@ class VisionDraftController implements ServiceExceptionHandler{
      * @return 审核人列表
      */
     def checkers(Long visionDraftId) {
-        renderJson visionDraftService.getCheckers(visionDraftId)
+        renderJson visionReviewerService.getCheckers(visionDraftId)
     }
 }

@@ -3,7 +3,6 @@ package cn.edu.bnuz.bell.planning
 import cn.edu.bnuz.bell.http.BadRequestException
 import cn.edu.bnuz.bell.http.ForbiddenException
 import cn.edu.bnuz.bell.http.NotFoundException
-import cn.edu.bnuz.bell.security.User
 import cn.edu.bnuz.bell.service.DataAccessService
 import cn.edu.bnuz.bell.tm.common.master.TermService
 import cn.edu.bnuz.bell.utils.CollectionUtils
@@ -12,6 +11,8 @@ import cn.edu.bnuz.bell.workflow.DomainStateMachineHandler
 import cn.edu.bnuz.bell.workflow.State
 import cn.edu.bnuz.bell.workflow.commands.SubmitCommand
 import grails.transaction.Transactional
+
+import javax.annotation.Resource
 
 /**
  * 培养方案编辑服务
@@ -24,6 +25,8 @@ class VisionDraftService {
     VisionPublicService visionPublicService
     DataAccessService dataAccessService
     TermService termService
+
+    @Resource(name='visionStateMachineHandler')
     DomainStateMachineHandler domainStateMachineHandler
 
     /**
@@ -347,21 +350,5 @@ where vision.id = :id
      */
     boolean canCreate(Integer programId) {
         Vision.countByProgram(Program.load(programId)) == 0
-    }
-
-    /**
-     * 获取审核人
-     * @param id Vision ID
-     * @return 审核人列表
-     */
-    List getCheckers(Long id) {
-        def departmentId = dataAccessService.getString '''
-select m.department.id
-from Vision v
-join v.program p
-join p.major m
-where v.id = :id
-''', [id: id]
-        User.findAllWithPermission('PERM_VISION_CHECK', departmentId)
     }
 }

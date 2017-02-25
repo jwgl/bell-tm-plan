@@ -14,6 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize
 @PreAuthorize('hasAuthority("PERM_SCHEME_WRITE")')
 class SchemeDraftController implements ServiceExceptionHandler {
     SchemeDraftService schemeDraftService
+    SchemeReviewerService schemeReviewerService
     SecurityService securityService
 
     /**
@@ -132,7 +133,7 @@ class SchemeDraftController implements ServiceExceptionHandler {
      * @return 审核人列表
      */
     def checkers(Long schemeDraftId) {
-        renderJson schemeDraftService.getCheckers(schemeDraftId)
+        renderJson schemeReviewerService.getCheckers(schemeDraftId)
     }
 
     /**

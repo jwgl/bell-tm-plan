@@ -15,6 +15,7 @@ import org.springframework.security.access.prepost.PreAuthorize
 @PreAuthorize('hasAnyAuthority("PERM_VISION_CHECK", "PERM_VISION_APPROVE")')
 class VisionReviewController implements ServiceExceptionHandler {
     VisionReviewService visionReviewService
+    VisionReviewerService visionReviewerService
 
     /**
      * 审核显示
@@ -62,6 +63,6 @@ class VisionReviewController implements ServiceExceptionHandler {
      * @return 批准人列表
      */
     def approvers(String reviewerId, Long visionReviewId) {
-        renderJson visionReviewService.getReviewers(Activities.APPROVE, visionReviewId)
+        renderJson visionReviewerService.getApprovers()
     }
 }

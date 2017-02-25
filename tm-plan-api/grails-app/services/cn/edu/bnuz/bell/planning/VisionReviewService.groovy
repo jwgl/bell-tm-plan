@@ -1,24 +1,22 @@
 package cn.edu.bnuz.bell.planning
 
-import cn.edu.bnuz.bell.http.BadRequestException
-import cn.edu.bnuz.bell.http.NotFoundException
-import cn.edu.bnuz.bell.security.User
-import cn.edu.bnuz.bell.workflow.AbstractReviewService
-import cn.edu.bnuz.bell.workflow.Activities
 import cn.edu.bnuz.bell.workflow.DomainStateMachineHandler
 import cn.edu.bnuz.bell.workflow.Workitem
 import cn.edu.bnuz.bell.workflow.commands.AcceptCommand
 import cn.edu.bnuz.bell.workflow.commands.RejectCommand
 import grails.transaction.Transactional
 
+import javax.annotation.Resource
+
 /**
  * 培养方案审核服务
  * @author Yang Lin
  */
 @Transactional
-class VisionReviewService extends AbstractReviewService {
+class VisionReviewService {
     VisionPublicService visionPublicService
-    VisionDraftService visionDraftService
+
+    @Resource(name='visionStateMachineHandler')
     DomainStateMachineHandler domainStateMachineHandler
 
     /**
@@ -31,7 +29,7 @@ class VisionReviewService extends AbstractReviewService {
     def getVisionForReview(String userId, Long id, UUID workitemId) {
         def vision = visionPublicService.getVisionInfo(id)
         def activity = Workitem.get(workitemId).activitySuffix
-        checkReviewer(id, activity, userId)
+        domainStateMachineHandler.checkReviewer(id, userId, activity)
         vision.activity = activity
         return vision
     }
@@ -44,20 +42,8 @@ class VisionReviewService extends AbstractReviewService {
      */
     void accept(String userId, AcceptCommand cmd, UUID workitemId) {
         Vision vision = Vision.get(cmd.id)
-
-        if (!vision) {
-            throw new NotFoundException()
-        }
-
-        if (!domainStateMachineHandler.canAccept(vision)) {
-            throw new BadRequestException()
-        }
-
         def activity = Workitem.get(workitemId).activitySuffix
-        checkReviewer(cmd.id, activity, userId)
-
-        domainStateMachineHandler.accept(vision, userId, cmd.comment, workitemId, cmd.to)
-
+        domainStateMachineHandler.accept(vision, userId, activity, cmd.comment, workitemId, cmd.to)
         vision.save()
     }
 
@@ -69,32 +55,8 @@ class VisionReviewService extends AbstractReviewService {
      */
     void reject(String userId, RejectCommand cmd, UUID workitemId) {
         Vision vision = Vision.get(cmd.id)
-
-        if (!vision) {
-            throw new NotFoundException()
-        }
-
-        if (!domainStateMachineHandler.canReject(vision)) {
-            throw new BadRequestException()
-        }
-
         def activity = Workitem.get(workitemId).activitySuffix
-        checkReviewer(cmd.id, activity, userId)
-
-        domainStateMachineHandler.reject(vision, userId, cmd.comment, workitemId)
-
+        domainStateMachineHandler.reject(vision, userId, activity, cmd.comment, workitemId)
         vision.save()
-    }
-
-    @Override
-    List<Map> getReviewers(String activity, Long id) {
-        switch (activity) {
-            case Activities.CHECK:
-                return visionDraftService.getCheckers(id)
-            case Activities.APPROVE:
-                return User.findAllWithPermission('PERM_VISION_APPROVE')
-            default:
-                throw new BadRequestException()
-        }
     }
 }

@@ -4,7 +4,6 @@ import cn.edu.bnuz.bell.http.BadRequestException
 import cn.edu.bnuz.bell.http.ForbiddenException
 import cn.edu.bnuz.bell.http.NotFoundException
 import cn.edu.bnuz.bell.organization.Department
-import cn.edu.bnuz.bell.security.User
 import cn.edu.bnuz.bell.service.DataAccessService
 import cn.edu.bnuz.bell.tm.common.master.TermService
 import cn.edu.bnuz.bell.utils.CollectionUtils
@@ -15,6 +14,8 @@ import cn.edu.bnuz.bell.workflow.commands.SubmitCommand
 import grails.compiler.GrailsCompileStatic
 import grails.transaction.Transactional
 import groovy.transform.TypeCheckingMode
+
+import javax.annotation.Resource
 
 /**
  * 教学计划编辑服务
@@ -27,6 +28,8 @@ class SchemeDraftService {
     ProgramService programService
     DataAccessService dataAccessService
     TermService termService
+
+    @Resource(name='schemeStateMachineHandler')
     DomainStateMachineHandler domainStateMachineHandler
     /**
      * 获取所有者的教学计划
@@ -517,22 +520,6 @@ where scheme.id = :id
     where ps.schemeRevisible = true
   )
 ''', [id: id, status: State.APPROVED]
-    }
-
-    /**
-     * 获取审核人
-     * @param id Scheme ID
-     * @return 审核人列表
-     */
-    List getCheckers(Long id) {
-        def departmentId = dataAccessService.getString '''
-select m.department.id
-from Scheme s
-join s.program p
-join p.major m
-where s.id = :id
-''', [id: id]
-        User.findAllWithPermission('PERM_SCHEME_CHECK', departmentId)
     }
 
     /**
