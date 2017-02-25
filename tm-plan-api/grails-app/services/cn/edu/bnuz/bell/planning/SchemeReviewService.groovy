@@ -11,6 +11,8 @@ import cn.edu.bnuz.bell.workflow.commands.AcceptCommand
 import cn.edu.bnuz.bell.workflow.commands.RejectCommand
 import grails.transaction.Transactional
 
+import javax.annotation.Resource
+
 /**
  * 教学计划审核服务
  * @author Yang Lin
@@ -19,6 +21,8 @@ import grails.transaction.Transactional
 class SchemeReviewService extends AbstractReviewService {
     SchemePublicService schemePublicService
     SchemeDraftService schemeDraftService
+
+    @Resource(name='schemeStateMachineHandler')
     DomainStateMachineHandler domainStateMachineHandler
 
     /**

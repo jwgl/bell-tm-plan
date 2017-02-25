@@ -1,5 +1,7 @@
 package cn.edu.bnuz.bell.tm.plan.api
 
+import cn.edu.bnuz.bell.planning.SchemeReviewerService
+import cn.edu.bnuz.bell.planning.VisionReviewerService
 import cn.edu.bnuz.bell.workflow.DomainStateMachineHandler
 import cn.edu.bnuz.bell.workflow.Event
 import cn.edu.bnuz.bell.workflow.State
@@ -15,10 +17,19 @@ import org.springframework.statemachine.persist.StateMachinePersister
 @Configuration
 @Import([DefaultStateMachineConfiguration, DefaultStateMachinePersistConfiguration])
 class WorkflowConfiguration {
-    @Bean
-    DomainStateMachineHandler domainStateMachineHandler(
+    @Bean('schemeStateMachineHandler')
+    DomainStateMachineHandler schemeStateMachineHandler(
             StateMachine<State, Event> stateMachine,
-            StateMachinePersister<State, Event, StateObject> persister) {
-        new DomainStateMachineHandler(stateMachine, persister)
+            StateMachinePersister<State, Event, StateObject> persister,
+            SchemeReviewerService reviewerService) {
+        new DomainStateMachineHandler(stateMachine, persister, reviewerService)
+    }
+
+    @Bean('visionStateMachineHandler')
+    DomainStateMachineHandler visionStateMachineHandler(
+            StateMachine<State, Event> stateMachine,
+            StateMachinePersister<State, Event, StateObject> persister,
+            VisionReviewerService reviewerService) {
+        new DomainStateMachineHandler(stateMachine, persister, reviewerService)
     }
 }

@@ -2,7 +2,6 @@ package cn.edu.bnuz.bell.planning
 
 import cn.edu.bnuz.bell.http.BadRequestException
 import cn.edu.bnuz.bell.http.ServiceExceptionHandler
-import cn.edu.bnuz.bell.workflow.Activities
 import cn.edu.bnuz.bell.workflow.Event
 import cn.edu.bnuz.bell.workflow.commands.AcceptCommand
 import cn.edu.bnuz.bell.workflow.commands.RejectCommand
@@ -15,6 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize
 @PreAuthorize('hasAnyAuthority("PERM_SCHEME_CHECK", "PERM_SCHEME_APPROVE")')
 class SchemeReviewController implements ServiceExceptionHandler {
     SchemeReviewService schemeReviewService
+    SchemeReviewerService schemeReviewerService
 
     /**
      * 审核显示
@@ -60,6 +60,6 @@ class SchemeReviewController implements ServiceExceptionHandler {
      * @return 批准人列表
      */
     def approvers(String reviewerId, Long schemeReviewId) {
-        renderJson schemeReviewService.getReviewers(Activities.APPROVE, schemeReviewId)
+        renderJson schemeReviewerService.getApprovers()
     }
 }
