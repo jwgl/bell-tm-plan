@@ -1,10 +1,5 @@
 package cn.edu.bnuz.bell.planning
 
-import cn.edu.bnuz.bell.http.BadRequestException
-import cn.edu.bnuz.bell.http.NotFoundException
-import cn.edu.bnuz.bell.security.User
-import cn.edu.bnuz.bell.workflow.AbstractReviewService
-import cn.edu.bnuz.bell.workflow.Activities
 import cn.edu.bnuz.bell.workflow.DomainStateMachineHandler
 import cn.edu.bnuz.bell.workflow.Workitem
 import cn.edu.bnuz.bell.workflow.commands.AcceptCommand
@@ -18,9 +13,8 @@ import javax.annotation.Resource
  * @author Yang Lin
  */
 @Transactional
-class SchemeReviewService extends AbstractReviewService {
+class SchemeReviewService {
     SchemePublicService schemePublicService
-    SchemeDraftService schemeDraftService
 
     @Resource(name='schemeStateMachineHandler')
     DomainStateMachineHandler domainStateMachineHandler
@@ -42,7 +36,7 @@ class SchemeReviewService extends AbstractReviewService {
         }
 
         def activity = Workitem.get(workitemId).activitySuffix
-        checkReviewer(id, activity, userId)
+        domainStateMachineHandler.checkReviewer(id, userId, activity)
         scheme.activity = activity
         return scheme
     }
@@ -55,20 +49,7 @@ class SchemeReviewService extends AbstractReviewService {
      */
     void accept(String userId, AcceptCommand cmd, UUID workitemId) {
         Scheme scheme = Scheme.get(cmd.id)
-
-        if (!scheme) {
-            throw new NotFoundException()
-        }
-
-        if (!domainStateMachineHandler.canAccept(scheme)) {
-            throw new BadRequestException()
-        }
-
-        def activity = Workitem.get(workitemId).activitySuffix
-        checkReviewer(cmd.id, activity, userId)
-
-        domainStateMachineHandler.accept(scheme, userId, cmd.comment, workitemId, cmd.to)
-
+        domainStateMachineHandler.accept(scheme, userId, null, cmd.comment, workitemId, cmd.to)
         scheme.save()
     }
 
@@ -80,32 +61,7 @@ class SchemeReviewService extends AbstractReviewService {
      */
     void reject(String userId, RejectCommand cmd, UUID workitemId) {
         Scheme scheme = Scheme.get(cmd.id)
-
-        if (!scheme) {
-            throw new NotFoundException()
-        }
-
-        if (!domainStateMachineHandler.canReject(scheme)) {
-            throw new BadRequestException()
-        }
-
-        def activity = Workitem.get(workitemId).activitySuffix
-        checkReviewer(cmd.id, activity, userId)
-
-        domainStateMachineHandler.reject(scheme, userId, cmd.comment, workitemId)
-
+        domainStateMachineHandler.reject(scheme, userId, null, cmd.comment, workitemId)
         scheme.save()
-    }
-
-    @Override
-    List<Map> getReviewers(String activity, Long id) {
-        switch (activity) {
-            case Activities.CHECK:
-                return schemeDraftService.getCheckers(id)
-            case Activities.APPROVE:
-                return User.findAllWithPermission('PERM_SCHEME_APPROVE')
-            default:
-                throw new BadRequestException()
-        }
     }
 }

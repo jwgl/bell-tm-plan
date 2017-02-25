@@ -42,8 +42,7 @@ class VisionReviewService {
      */
     void accept(String userId, AcceptCommand cmd, UUID workitemId) {
         Vision vision = Vision.get(cmd.id)
-        def activity = Workitem.get(workitemId).activitySuffix
-        domainStateMachineHandler.accept(vision, userId, activity, cmd.comment, workitemId, cmd.to)
+        domainStateMachineHandler.accept(vision, userId, null, cmd.comment, workitemId, cmd.to)
         vision.save()
     }
 
@@ -55,8 +54,7 @@ class VisionReviewService {
      */
     void reject(String userId, RejectCommand cmd, UUID workitemId) {
         Vision vision = Vision.get(cmd.id)
-        def activity = Workitem.get(workitemId).activitySuffix
-        domainStateMachineHandler.reject(vision, userId, activity, cmd.comment, workitemId)
+        domainStateMachineHandler.reject(vision, userId, null, cmd.comment, workitemId)
         vision.save()
     }
 }
