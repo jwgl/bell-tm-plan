@@ -22,7 +22,7 @@ class VisionReviewerService implements ReviewerProvider{
         }
     }
 
-    List getCheckers(Long id) {
+    List<Map> getCheckers(Long id) {
         def departmentId = dataAccessService.getString '''
 select m.department.id
 from Vision v
@@ -33,7 +33,7 @@ where v.id = :id
         User.findAllWithPermission('PERM_VISION_CHECK', departmentId)
     }
 
-    List getApprovers() {
+    List<Map> getApprovers() {
         User.findAllWithPermission('PERM_VISION_APPROVE')
     }
 }

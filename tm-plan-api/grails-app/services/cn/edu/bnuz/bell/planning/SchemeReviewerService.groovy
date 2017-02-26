@@ -22,7 +22,7 @@ class SchemeReviewerService implements ReviewerProvider{
         }
     }
 
-    List getCheckers(Long id) {
+    List<Map> getCheckers(Long id) {
         def departmentId = dataAccessService.getString '''
 select m.department.id
 from Scheme s
@@ -33,7 +33,7 @@ where s.id = :id
         User.findAllWithPermission('PERM_SCHEME_CHECK', departmentId)
     }
 
-    List getApprovers() {
+    List<Map> getApprovers() {
         User.findAllWithPermission('PERM_VISION_APPROVE')
     }
 }
