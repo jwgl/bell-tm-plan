@@ -115,7 +115,7 @@ server:
 
 spring:
     application:
-        name: '@info.app.name@'
+        name: tm-plan-api
 
 eureka:
     client:

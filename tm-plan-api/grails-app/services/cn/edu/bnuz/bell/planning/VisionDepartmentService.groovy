@@ -1,6 +1,6 @@
 package cn.edu.bnuz.bell.planning
 
-import cn.edu.bnuz.bell.tm.common.master.TermService
+import cn.edu.bnuz.bell.master.TermService
 import cn.edu.bnuz.bell.workflow.State
 import grails.transaction.Transactional
 
