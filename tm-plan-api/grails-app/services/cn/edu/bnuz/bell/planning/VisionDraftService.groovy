@@ -4,7 +4,7 @@ import cn.edu.bnuz.bell.http.BadRequestException
 import cn.edu.bnuz.bell.http.ForbiddenException
 import cn.edu.bnuz.bell.http.NotFoundException
 import cn.edu.bnuz.bell.service.DataAccessService
-import cn.edu.bnuz.bell.tm.common.master.TermService
+import cn.edu.bnuz.bell.master.TermService
 import cn.edu.bnuz.bell.utils.CollectionUtils
 import cn.edu.bnuz.bell.utils.GroupCondition
 import cn.edu.bnuz.bell.workflow.DomainStateMachineHandler
