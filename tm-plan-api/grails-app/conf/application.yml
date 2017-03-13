@@ -115,7 +115,7 @@ server:
 
 spring:
     application:
-        name: tm-plan-api
+        name: ${info.app.name}
 
 eureka:
     client:
@@ -135,5 +135,3 @@ bell:
             prefixes:
                 - dv
                 - et
-    student:
-        picturePath: 'D:\bell\bell-tm-pictures'
