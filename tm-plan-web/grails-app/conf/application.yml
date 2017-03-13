@@ -86,7 +86,7 @@ server:
 
 spring:
     application:
-        name: tm-plan-web
+        name: ${info.app.name}
 
 eureka:
     client:
