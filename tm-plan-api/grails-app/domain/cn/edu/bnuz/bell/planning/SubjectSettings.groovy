@@ -10,7 +10,7 @@ class SubjectSettings {
     /**
      * 虚拟ID，对应属性#subject
      */
-    String id;
+    String id
 
     /**
      * 校内专业

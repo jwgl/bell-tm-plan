@@ -295,13 +295,13 @@ where program.id = :programId
 
     private void processSchemeCourses(Scheme scheme, List<SchemeCourseCommand> schemeCourseCommands) {
         // 新建项
-        ArrayList<SchemeCourseCommand> created = [];
+        ArrayList<SchemeCourseCommand> created = []
         // 修改项（更改以前版本，需要插入新数据和标记旧数据）
-        ArrayList<SchemeCourseCommand> modified = [];
+        ArrayList<SchemeCourseCommand> modified = []
         // 更新项
-        ArrayList<SchemeCourseCommand> updated = [];
+        ArrayList<SchemeCourseCommand> updated = []
         // 恢复项
-        ArrayList<SchemeCourseCommand> reverted = [];
+        ArrayList<SchemeCourseCommand> reverted = []
         // 删除项（含被修改项）
         Map<Object, SchemeCourseCommand> deleted = [:]
 
@@ -313,16 +313,16 @@ where program.id = :programId
                     } else {
                         created << scc
                     }
-                    break;
+                    break
                 case SchemeCourseCommand.STATUS_DELETED:
                     deleted[scc.id] = scc
-                    break;
+                    break
                 case SchemeCourseCommand.STATUS_UPDATED:
                     updated << scc
-                    break;
+                    break
                 case SchemeCourseCommand.STATUS_REVERTED:
                     reverted << scc
-                    break;
+                    break
             }
         }
 
