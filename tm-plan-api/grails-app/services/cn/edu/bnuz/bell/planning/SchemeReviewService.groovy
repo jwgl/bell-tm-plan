@@ -1,5 +1,6 @@
 package cn.edu.bnuz.bell.planning
 
+import cn.edu.bnuz.bell.workflow.Activities
 import cn.edu.bnuz.bell.workflow.DomainStateMachineHandler
 import cn.edu.bnuz.bell.workflow.Workitem
 import cn.edu.bnuz.bell.workflow.commands.AcceptCommand
@@ -49,7 +50,15 @@ class SchemeReviewService {
      */
     void accept(String userId, AcceptCommand cmd, UUID workitemId) {
         Scheme scheme = Scheme.get(cmd.id)
-        domainStateMachineHandler.accept(scheme, userId, null, cmd.comment, workitemId, cmd.to)
+        def activity = Workitem.get(workitemId).activitySuffix
+        switch (activity) {
+            case Activities.CHECK:
+                domainStateMachineHandler.accept(scheme, userId, activity, cmd.comment, workitemId, cmd.to)
+                break
+            case Activities.APPROVE:
+                domainStateMachineHandler.accept(scheme, userId, activity, cmd.comment, workitemId)
+                break
+        }
         scheme.save()
     }
 

@@ -1,5 +1,6 @@
 package cn.edu.bnuz.bell.planning
 
+import cn.edu.bnuz.bell.workflow.Activities
 import cn.edu.bnuz.bell.workflow.DomainStateMachineHandler
 import cn.edu.bnuz.bell.workflow.Workitem
 import cn.edu.bnuz.bell.workflow.commands.AcceptCommand
@@ -42,7 +43,16 @@ class VisionReviewService {
      */
     void accept(String userId, AcceptCommand cmd, UUID workitemId) {
         Vision vision = Vision.get(cmd.id)
-        domainStateMachineHandler.accept(vision, userId, null, cmd.comment, workitemId, cmd.to)
+        def activity = Workitem.get(workitemId).activitySuffix
+        switch (activity) {
+            case Activities.CHECK:
+                domainStateMachineHandler.accept(vision, userId, activity, cmd.comment, workitemId, cmd.to)
+                break
+            case Activities.APPROVE:
+                domainStateMachineHandler.accept(vision, userId, activity, cmd.comment, workitemId)
+                break
+        }
+
         vision.save()
     }
 
@@ -55,6 +65,7 @@ class VisionReviewService {
     void reject(String userId, RejectCommand cmd, UUID workitemId) {
         Vision vision = Vision.get(cmd.id)
         domainStateMachineHandler.reject(vision, userId, null, cmd.comment, workitemId)
+
         vision.save()
     }
 }
