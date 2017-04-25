@@ -1,8 +1,7 @@
 package cn.edu.bnuz.bell.planning
 
-import org.apache.commons.lang.builder.HashCodeBuilder
-
 import cn.edu.bnuz.bell.master.Property
+import org.codehaus.groovy.util.HashCodeHelper
 
 /**
  * 教学计划模板-课程性质
@@ -60,11 +59,9 @@ class SchemeTemplateProperty implements Serializable{
     }
 
     int hashCode() {
-        def builder = new HashCodeBuilder()
-        if (schemeTemplate)
-            builder.append(schemeTemplate.id)
-        if (property)
-            builder.append(property.id)
-        builder.toHashCode()
+        int hash = HashCodeHelper.initHash()
+        hash = HashCodeHelper.updateHash(hash, schemeTemplate.id)
+        hash = HashCodeHelper.updateHash(hash, property.id)
+        hash
     }
 }

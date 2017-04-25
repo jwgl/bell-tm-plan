@@ -1,6 +1,6 @@
 package cn.edu.bnuz.bell.planning
 
-import org.apache.commons.lang.builder.HashCodeBuilder
+import org.codehaus.groovy.util.HashCodeHelper
 
 /**
  * 培养方案模板-学期
@@ -42,11 +42,9 @@ class SchemeTemplateTerm implements Serializable {
     }
 
     int hashCode() {
-        def builder = new HashCodeBuilder()
-        if (schemeTemplate)
-            builder.append(schemeTemplate.id)
-        if (term)
-            builder.append(term)
-        builder.toHashCode()
+        int hash = HashCodeHelper.initHash()
+        hash = HashCodeHelper.updateHash(hash, schemeTemplate.id)
+        hash = HashCodeHelper.updateHash(hash, term)
+        hash
     }
 }
