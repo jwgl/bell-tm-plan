@@ -3,7 +3,6 @@ package cn.edu.bnuz.bell.tm.plan.api
 class UrlMappings {
 
     static mappings = {
-        // 编辑
         "/users"(resources: 'user', includes: []) {
             "/visions"(resources: 'visionDraft') {
                 "/checkers"(controller: 'visionDraft', action: 'checkers', method: 'GET')
@@ -16,7 +15,6 @@ class UrlMappings {
             }
         }
 
-        // 学院管理
         "/departments"(resources: 'department', includes: []) {
             "/visions"(resources: 'visionDepartment', includes: ['index']) {
                 collection {
@@ -32,11 +30,29 @@ class UrlMappings {
             }
         }
 
-        // 培养方案管理
         "/visions"(resources: 'visionAdmin', includes: ['index', 'show'])
 
-        // 教学计划管理
         "/schemes"(resources: 'schemeAdmin', includes: ['index', 'show'])
+
+        "/checkers"(resources: 'checker', includes: []) {
+            "/visions"(resources: 'visionCheck', includes:['index']) {
+                "/workitems"(resources: 'visionCheck', includes: ['show', 'patch'])
+                "/approvers"(controller: 'visionCheck', action: 'approvers', method: 'GET')
+            }
+            "/schemes"(resources: 'schemeCheck', includes:['index']) {
+                "/workitems"(resources: 'schemeCheck', includes: ['show', 'patch'])
+                "/approvers"(controller: 'schemeCheck', action: 'approvers', method: 'GET')
+            }
+        }
+
+        "/approvers"(resources: 'approver', includes: []) {
+            "/visions"(resources: 'visionApproval', includes:['index']) {
+                "/workitems"(resources: 'visionApproval', includes: ['show', 'patch'])
+            }
+            "/schemes"(resources: 'schemeApproval', includes:['index']) {
+                "/workitems"(resources: 'schemeApproval', includes: ['show', 'patch'])
+            }
+        }
 
         // 审核
         "/reviewers"(resources: 'reviewer', includes: []) {

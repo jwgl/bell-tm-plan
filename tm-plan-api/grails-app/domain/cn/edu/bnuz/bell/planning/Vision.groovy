@@ -1,5 +1,6 @@
 package cn.edu.bnuz.bell.planning
 
+import cn.edu.bnuz.bell.organization.Teacher
 import cn.edu.bnuz.bell.workflow.StateObject
 import cn.edu.bnuz.bell.workflow.State
 import cn.edu.bnuz.bell.workflow.StateUserType
@@ -56,6 +57,46 @@ class Vision implements StateObject {
     Vision previous
 
     /**
+     * 创建人
+     */
+    Teacher creator
+
+    /**
+     * 创建时间
+     */
+    Date dateCreated
+
+    /**
+     * 修改时间
+     */
+    Date dateModified
+
+    /**
+     * 提交时间
+     */
+    Date dateSubmitted
+
+    /**
+     * 审核人
+     */
+    Teacher checker
+
+    /**
+     * 审核时间
+     */
+    Date dateChecked
+
+    /**
+     * 审批人
+     */
+    Teacher approver
+
+    /**
+     * 审批时间
+     */
+    Date dateApproved
+
+    /**
      * 工作流实例
      */
     WorkflowInstance workflowInstance
@@ -72,20 +113,39 @@ class Vision implements StateObject {
         schoolingLength     length: 2000, comment: '学制'
         awardedDegree       length: 1000, comment: '授予学位'
         previous            unique: ['program'], comment: '上一版本'
+        creator             comment: '创建人'
+        dateCreated         comment: '创建时间'
+        dateModified        comment: '修改时间'
+        dateSubmitted       comment: '提交时间'
+        checker             comment: '审核人'
+        dateChecked         comment: '审核时间'
+        approver            comment: '审批人'
+        dateApproved        comment: '审批时间'
         workflowInstance    comment: '工作流实例'
     }
 
     static constraints = {
-        schoolingLength      nullable: true
-        awardedDegree        nullable: true
-        previous             nullable: true
-        workflowInstance     nullable: true
+        schoolingLength     nullable: true
+        awardedDegree       nullable: true
+        previous            nullable: true
+        creator             nullable: true
+        dateCreated         nullable: true
+        dateModified        nullable: true
+        dateSubmitted       nullable: true
+        checker             nullable: true
+        dateChecked         nullable: true
+        approver            nullable: true
+        dateApproved        nullable: true
+        workflowInstance    nullable: true
     }
 
     String getWorkflowId() {
-        this.previous ? 'vision.revise' : 'vision.create'
+        this.previous ? REVISE_WORKFLOW_ID : CREATE_WORKFLOW_ID
     }
 
     static Integer VERSION_INCREMENT = 1 << 8
     static Integer INITIAL_VERSION = 1 << 24
+
+    static String CREATE_WORKFLOW_ID = 'vision.create'
+    static String REVISE_WORKFLOW_ID = 'vision.revise'
 }

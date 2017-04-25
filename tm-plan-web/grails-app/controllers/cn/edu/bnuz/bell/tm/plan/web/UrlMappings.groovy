@@ -7,6 +7,16 @@ class UrlMappings {
 
         "/schemes"(resources: 'schemeAdmin', includes: ['index'])
 
+        "/checkers"(resources: 'checker', 'includes': []) {
+            "/visions"(resources: 'visionCheck', includes: ['index'])
+            "/schemes"(resources: 'schemeCheck', includes: ['index'])
+        }
+
+        "/approvers"(resources: 'approver', 'includes': []) {
+            "/visions"(resources: 'visionApproval', includes: ['index'])
+            "/schemes"(resources: 'schemeApproval', includes: ['index'])
+        }
+
         "/reviewers"(resources: 'reviewer', includes: []) {
             "/visions"(resources:'visionReview', includes: []) {
                 "/workitems"(resources: 'visionReview', includes: ['show'])

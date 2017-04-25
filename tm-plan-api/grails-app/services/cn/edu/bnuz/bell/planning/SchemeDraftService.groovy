@@ -4,6 +4,7 @@ import cn.edu.bnuz.bell.http.BadRequestException
 import cn.edu.bnuz.bell.http.ForbiddenException
 import cn.edu.bnuz.bell.http.NotFoundException
 import cn.edu.bnuz.bell.organization.Department
+import cn.edu.bnuz.bell.organization.Teacher
 import cn.edu.bnuz.bell.service.DataAccessService
 import cn.edu.bnuz.bell.master.TermService
 import cn.edu.bnuz.bell.utils.CollectionUtils
@@ -228,6 +229,10 @@ where program.id = :programId
                 status: domainStateMachineHandler.initialState,
         )
         processSchemeCourses(scheme, cmd.courses)
+
+        scheme.creator = Teacher.load(userId)
+        scheme.dateCreated = new Date()
+        scheme.dateModified = scheme.dateCreated
         scheme.save()
 
         domainStateMachineHandler.create(scheme, userId)
@@ -257,6 +262,10 @@ where program.id = :programId
                 status: domainStateMachineHandler.initialState
         )
         processSchemeCourses(scheme, cmd.courses)
+
+        scheme.creator = Teacher.load(userId)
+        scheme.dateCreated = new Date()
+        scheme.dateModified = scheme.dateCreated
         scheme.save()
 
         domainStateMachineHandler.create(scheme, userId)
@@ -290,6 +299,7 @@ where program.id = :programId
 
         domainStateMachineHandler.update(scheme, userId)
 
+        scheme.dateModified = new Date()
         scheme.save()
     }
 
@@ -485,6 +495,7 @@ where program.id = :programId
 
         domainStateMachineHandler.submit(scheme, userId, cmd.to, cmd.comment, cmd.title)
 
+        scheme.dateSubmitted = new Date()
         scheme.save()
     }
 
