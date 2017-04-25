@@ -1,5 +1,6 @@
 package cn.edu.bnuz.bell.planning
 
+import cn.edu.bnuz.bell.organization.Teacher
 import cn.edu.bnuz.bell.workflow.StateObject
 import cn.edu.bnuz.bell.workflow.State
 import cn.edu.bnuz.bell.workflow.StateUserType
@@ -35,7 +36,45 @@ class Scheme implements StateObject {
      */
     Scheme previous
 
-    Set<SchemeCourse> courses
+    /**
+     * 创建人
+     */
+    Teacher creator
+
+    /**
+     * 创建时间
+     */
+    Date dateCreated
+
+    /**
+     * 修改时间
+     */
+    Date dateModified
+
+    /**
+     * 提交时间
+     */
+    Date dateSubmitted
+
+    /**
+     * 审核人
+     */
+    Teacher checker
+
+    /**
+     * 审核时间
+     */
+    Date dateChecked
+
+    /**
+     * 审批人
+     */
+    Teacher approver
+
+    /**
+     * 审批时间
+     */
+    Date dateApproved
 
     WorkflowInstance workflowInstance
 
@@ -52,20 +91,38 @@ class Scheme implements StateObject {
         status              sqlType: 'state', type: StateUserType, comment: '状态'
         program             comment: '教学计划'
         previous            unique: ['program'], comment: '上一版本'
-        workflowInstance    comment: '工作流实例'
         courses             cascade: 'all-delete-orphan'
         tempCourses         cascade: 'all-delete-orphan'
+        creator             comment: '创建人'
+        dateCreated         comment: '创建时间'
+        dateModified        comment: '修改时间'
+        dateSubmitted       comment: '提交时间'
+        checker             comment: '审核人'
+        dateChecked         comment: '审核时间'
+        approver            comment: '审批人'
+        dateApproved        comment: '审批时间'
+        workflowInstance    comment: '工作流实例'
     }
 
     static constraints = {
         previous            nullable: true
+        creator             nullable: true
+        dateCreated         nullable: true
+        dateModified        nullable: true
+        dateSubmitted       nullable: true
+        checker             nullable: true
+        dateChecked         nullable: true
+        approver            nullable: true
+        dateApproved        nullable: true
         workflowInstance    nullable: true
     }
 
     String getWorkflowId() {
-        this.previous ? 'scheme.revise' : 'scheme.create'
+        this.previous ? REVISE_WORKFLOW_ID : CREATE_WORKFLOW_ID
     }
 
     static Integer VERSION_INCREMENT = 1 << 8
     static Integer INITIAL_VERSION = 1 << 24
+    static String CREATE_WORKFLOW_ID = 'scheme.create'
+    static String REVISE_WORKFLOW_ID = 'scheme.revise'
 }

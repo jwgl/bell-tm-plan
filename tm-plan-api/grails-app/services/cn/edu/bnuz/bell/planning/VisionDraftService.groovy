@@ -3,6 +3,7 @@ package cn.edu.bnuz.bell.planning
 import cn.edu.bnuz.bell.http.BadRequestException
 import cn.edu.bnuz.bell.http.ForbiddenException
 import cn.edu.bnuz.bell.http.NotFoundException
+import cn.edu.bnuz.bell.organization.Teacher
 import cn.edu.bnuz.bell.service.DataAccessService
 import cn.edu.bnuz.bell.master.TermService
 import cn.edu.bnuz.bell.utils.CollectionUtils
@@ -204,6 +205,9 @@ where program.id = :programId
         vision.properties = cmd
         vision.program = Program.load(cmd.programId)
         vision.status = domainStateMachineHandler.initialState
+        vision.creator = Teacher.load(userId)
+        vision.dateCreated = new Date()
+        vision.dateModified = vision.dateCreated
         vision.save()
 
         domainStateMachineHandler.create(vision, userId)
@@ -232,6 +236,9 @@ where program.id = :programId
         vision.program = previous.program
         vision.previous = previous
         vision.status = domainStateMachineHandler.initialState
+        vision.creator = Teacher.load(userId)
+        vision.dateCreated = new Date()
+        vision.dateModified = vision.dateCreated
         vision.save()
 
         domainStateMachineHandler.create(vision, userId)
@@ -264,6 +271,7 @@ where program.id = :programId
 
         domainStateMachineHandler.update(vision, userId)
 
+        vision.dateModified = new Date()
         vision.save()
     }
 
@@ -316,6 +324,7 @@ where program.id = :programId
 
         domainStateMachineHandler.submit(vision, userId, cmd.to, cmd.comment, cmd.title)
 
+        vision.dateSubmitted = new Date()
         vision.save()
     }
 
