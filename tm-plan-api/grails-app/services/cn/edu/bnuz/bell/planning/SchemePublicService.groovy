@@ -1,15 +1,17 @@
 package cn.edu.bnuz.bell.planning
 
-import cn.edu.bnuz.bell.service.DataAccessService
 import cn.edu.bnuz.bell.master.TermService
+import cn.edu.bnuz.bell.service.DataAccessService
 import cn.edu.bnuz.bell.utils.CollectionUtils
 import cn.edu.bnuz.bell.utils.GroupCondition
 import cn.edu.bnuz.bell.workflow.State
+import grails.gorm.transactions.Transactional
 
 /**
  * 教学计划公共服务。
  * @author Yang Lin
  */
+@Transactional(readOnly = true)
 class SchemePublicService {
     ProgramService programService
     DataAccessService dataAccessService
@@ -287,10 +289,15 @@ where scheme.program.id = :programId
      * @return 课程列表
      */
     def getPropertyCourses(Long schemeId, Integer propertyId) {
-        def results = []
-        results.addAll this.getSchemeCoursesInfo(schemeId)
-        results.addAll this.getSchemeTempCoursesInfo(schemeId)
-        results.findAll {it.propertyId == propertyId}
+        List courses = this.getSchemeCoursesInfo(schemeId).findAll { it.propertyId == propertyId }
+        courses.forEach { it.isTempCourse = false }
+
+        List tempCourses = this.getSchemeTempCoursesInfo(schemeId).findAll { it.propertyId == propertyId }
+        tempCourses.forEach { it.isTempCourse = true }
+
+        courses.addAll(tempCourses)
+
+        return courses
     }
 
     /**
@@ -300,9 +307,14 @@ where scheme.program.id = :programId
      * @return 课程列表
      */
     def getDirectionCourses(Long schemeId, Integer directionId) {
-        def results = []
-        results.addAll this.getSchemeCoursesInfo(schemeId)
-        results.addAll this.getSchemeTempCoursesInfo(schemeId)
-        results.findAll {it.directionId == directionId}
+        List courses = this.getSchemeCoursesInfo(schemeId).findAll { it.directionId == directionId }
+        courses.forEach { it.isTempCourse = false }
+
+        List tempCourses = this.getSchemeTempCoursesInfo(schemeId).findAll { it.directionId == directionId }
+        tempCourses.forEach { it.isTempCourse = true }
+
+        courses.addAll(tempCourses)
+
+        return courses
     }
 }
