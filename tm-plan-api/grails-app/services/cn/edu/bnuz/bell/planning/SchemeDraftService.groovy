@@ -3,18 +3,16 @@ package cn.edu.bnuz.bell.planning
 import cn.edu.bnuz.bell.http.BadRequestException
 import cn.edu.bnuz.bell.http.ForbiddenException
 import cn.edu.bnuz.bell.http.NotFoundException
+import cn.edu.bnuz.bell.master.TermService
 import cn.edu.bnuz.bell.organization.Department
 import cn.edu.bnuz.bell.organization.Teacher
 import cn.edu.bnuz.bell.service.DataAccessService
-import cn.edu.bnuz.bell.master.TermService
 import cn.edu.bnuz.bell.utils.CollectionUtils
 import cn.edu.bnuz.bell.utils.GroupCondition
 import cn.edu.bnuz.bell.workflow.DomainStateMachineHandler
 import cn.edu.bnuz.bell.workflow.State
 import cn.edu.bnuz.bell.workflow.commands.SubmitCommand
-import grails.compiler.GrailsCompileStatic
 import grails.transaction.Transactional
-import groovy.transform.TypeCheckingMode
 
 import javax.annotation.Resource
 
@@ -23,7 +21,6 @@ import javax.annotation.Resource
  * @author Yang Lin
  */
 @Transactional
-@GrailsCompileStatic
 class SchemeDraftService {
     SchemePublicService schemePublicService
     ProgramService programService
@@ -175,7 +172,6 @@ order by subject.id, major.grade desc, s.versionNumber desc
      * @param userId 用户ID
      * @return 新建数据
      */
-    @GrailsCompileStatic(TypeCheckingMode.SKIP)
     def getSchemeForCreate(Integer programId, String userId) {
         def scheme = dataAccessService.find(SchemeDto, '''
 select new Dto (
@@ -336,7 +332,7 @@ where program.id = :programId
             }
         }
 
-        created.each { c ->
+        created.forEach { c ->
             if (!c.isTempCourse) {
                 SchemeCourse schemeCourse = c.toSchemeCourse()
                 scheme.addToCourses(schemeCourse)
@@ -352,7 +348,7 @@ where program.id = :programId
             }
         }
 
-        modified.each { c ->
+        modified.forEach { c ->
             if (!c.isTempCourse) {
                 // 如果引用项不是当前版本的，则插入
                 SchemeCourse schemeCourse = c.toSchemeCourse()
@@ -379,7 +375,7 @@ where program.id = :programId
             deleted.remove(c.previousId)
         }
 
-        updated.each { c ->
+        updated.forEach { c ->
             if (!c.isTempCourse) {
                 if (c.previousId) {
                     SchemeCourse previous = SchemeCourse.get(c.previousId)
@@ -390,9 +386,8 @@ where program.id = :programId
                     }
                 }
 
-                SchemeCourse schemeCourse = SchemeCourse.get(c.id)
+                SchemeCourse schemeCourse = scheme.courses.find { it.id == c.id }
                 c.update(schemeCourse)
-                schemeCourse.save()
             } else {
                 if (c.previousId) {
                     SchemeTempCourse previous = SchemeTempCourse.get(c.previousId)
@@ -403,9 +398,8 @@ where program.id = :programId
                     }
                 }
 
-                SchemeTempCourse schemeTempCourse = SchemeTempCourse.get(c.id)
+                SchemeTempCourse schemeTempCourse = scheme.tempCourses.find { it.id == c.id }
                 c.update(schemeTempCourse)
-                schemeTempCourse.save()
             }
 
             if (c.previousId) {
@@ -414,7 +408,7 @@ where program.id = :programId
             }
         }
 
-        deleted.each { k, c ->
+        deleted.forEach { k, c ->
             if (!c.isTempCourse) {
                 // 标记删除
                 SchemeCourse.markDelete(c.id, scheme.versionNumber)
@@ -424,7 +418,7 @@ where program.id = :programId
             }
         }
 
-        reverted.each { c ->
+        reverted.forEach { c ->
             if (!c.isTempCourse) {
                 if (c.schemeId == scheme.id) {
                     // 删除新增项
