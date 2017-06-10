@@ -2,9 +2,13 @@ package cn.edu.bnuz.bell.planning
 
 import cn.edu.bnuz.bell.utils.CollectionUtils
 import cn.edu.bnuz.bell.utils.GroupCondition
-import grails.transaction.Transactional
+import grails.gorm.transactions.Transactional
 
-@Transactional
+/**
+ * 教学计划管理员服务
+ * @author Yang Lin
+ */
+@Transactional(readOnly = true)
 class SchemeAdminService {
     SchemePublicService schemePublicService
 

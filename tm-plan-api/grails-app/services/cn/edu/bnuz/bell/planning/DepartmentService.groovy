@@ -2,9 +2,13 @@ package cn.edu.bnuz.bell.planning
 
 import cn.edu.bnuz.bell.master.Major
 import cn.edu.bnuz.bell.organization.Department
-import grails.transaction.Transactional
+import grails.gorm.transactions.Transactional
 
-@Transactional
+/**
+ * 学院（与计划相关）服务
+ * @author Yang Lin
+ */
+@Transactional(readOnly = true)
 class DepartmentService {
     List<Map> getDepartments() {
         Department.executeQuery '''

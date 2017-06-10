@@ -2,9 +2,13 @@ package cn.edu.bnuz.bell.planning
 
 import cn.edu.bnuz.bell.master.TermService
 import cn.edu.bnuz.bell.workflow.State
-import grails.transaction.Transactional
+import grails.gorm.transactions.Transactional
 
-@Transactional
+/**
+ * 培养方案部门管理服务
+ * @author Yang Lin
+ */
+@Transactional(readOnly = true)
 class VisionDepartmentService {
     TermService termService
 

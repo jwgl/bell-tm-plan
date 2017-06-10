@@ -1,7 +1,7 @@
 package cn.edu.bnuz.bell.planning
 
 import cn.edu.bnuz.bell.service.DataAccessService
-import grails.transaction.Transactional
+import grails.gorm.transactions.Transactional
 
 /**
  * 教学计划设置服务

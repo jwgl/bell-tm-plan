@@ -5,11 +5,13 @@ import cn.edu.bnuz.bell.master.TermService
 import cn.edu.bnuz.bell.utils.CollectionUtils
 import cn.edu.bnuz.bell.utils.GroupCondition
 import cn.edu.bnuz.bell.workflow.State
+import grails.gorm.transactions.Transactional
 
 /**
- * 培养方案审核服务
+ * 培养方案公共视图服务
  * @author Yang Lin
  */
+@Transactional(readOnly = true)
 class VisionPublicService {
     SchemePublicService schemePublicService
     TermService termService

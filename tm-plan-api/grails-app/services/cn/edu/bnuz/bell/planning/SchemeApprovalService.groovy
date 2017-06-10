@@ -8,8 +8,12 @@ import cn.edu.bnuz.bell.workflow.ListType
 import cn.edu.bnuz.bell.workflow.State
 import cn.edu.bnuz.bell.workflow.commands.AcceptCommand
 import cn.edu.bnuz.bell.workflow.commands.RejectCommand
-import grails.transaction.Transactional
+import grails.gorm.transactions.Transactional
 
+/**
+ * 教学计划审批服务
+ * @author Yang Lin
+ */
 @Transactional
 class SchemeApprovalService extends SchemeCheckService {
     protected getCounts(String userId) {

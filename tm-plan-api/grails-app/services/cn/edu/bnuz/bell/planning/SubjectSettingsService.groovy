@@ -3,8 +3,12 @@ package cn.edu.bnuz.bell.planning
 import cn.edu.bnuz.bell.master.Subject
 import cn.edu.bnuz.bell.organization.Teacher
 import cn.edu.bnuz.bell.master.TermService
-import grails.transaction.Transactional
+import grails.gorm.transactions.Transactional
 
+/**
+ * 专业设置服务
+ * @author Yang Lin
+ */
 @Transactional
 class SubjectSettingsService {
     TermService termService
