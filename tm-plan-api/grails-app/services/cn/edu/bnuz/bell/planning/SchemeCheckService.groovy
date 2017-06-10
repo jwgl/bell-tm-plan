@@ -14,14 +14,18 @@ import cn.edu.bnuz.bell.workflow.WorkflowInstance
 import cn.edu.bnuz.bell.workflow.Workitem
 import cn.edu.bnuz.bell.workflow.commands.AcceptCommand
 import cn.edu.bnuz.bell.workflow.commands.RejectCommand
-import grails.transaction.Transactional
+import grails.gorm.transactions.Transactional
 
 import javax.annotation.Resource
 
+/**
+ * 教学计划审核服务
+ * @author Yang Lin
+ */
 @Transactional
 class SchemeCheckService {
     SchemePublicService schemePublicService
-    @Resource(name='schemeStateMachineHandler')
+    @Resource(name = 'schemeStateMachineHandler')
     DomainStateMachineHandler domainStateMachineHandler
     DataAccessService dataAccessService
 
@@ -86,7 +90,7 @@ order by scheme.dateSubmitted
 ''', [userId: userId, status: State.SUBMITTED], args
 
         [
-                forms: schemes,
+                forms : schemes,
                 counts: getCounts(userId)
         ]
     }
@@ -114,7 +118,7 @@ order by scheme.dateChecked desc
 ''', [userId: userId], args
 
         [
-                forms: schemes,
+                forms : schemes,
                 counts: getCounts(userId)
         ]
     }
@@ -130,18 +134,18 @@ order by scheme.dateChecked desc
 
         def workitem = Workitem.findByInstanceAndActivityAndToAndDateProcessedIsNull(
                 WorkflowInstance.load(scheme.workflowInstanceId),
-                WorkflowActivity.load("${scheme.previousId ? Scheme.REVISE_WORKFLOW_ID: Scheme.CREATE_WORKFLOW_ID}.${activity}"),
+                WorkflowActivity.load("${scheme.previousId ? Scheme.REVISE_WORKFLOW_ID : Scheme.CREATE_WORKFLOW_ID}.${activity}"),
                 User.load(userId),
         )
 
         domainStateMachineHandler.checkReviewer(id, userId, activity)
 
         [
-                scheme: scheme,
-                counts: getCounts(userId),
+                scheme    : scheme,
+                counts    : getCounts(userId),
                 workitemId: workitem ? workitem.id : null,
-                prevId: getPrevReviewId(userId, id, type),
-                nextId: getNextReviewId(userId, id, type),
+                prevId    : getPrevReviewId(userId, id, type),
+                nextId    : getNextReviewId(userId, id, type),
         ]
     }
 
@@ -159,11 +163,11 @@ order by scheme.dateChecked desc
         domainStateMachineHandler.checkReviewer(id, userId, activity)
 
         [
-                scheme: scheme,
-                counts: getCounts(userId),
+                scheme    : scheme,
+                counts    : getCounts(userId),
                 workitemId: workitemId,
-                prevId: getPrevReviewId(userId, id, type),
-                nextId: getNextReviewId(userId, id, type),
+                prevId    : getPrevReviewId(userId, id, type),
+                nextId    : getNextReviewId(userId, id, type),
         ]
     }
 

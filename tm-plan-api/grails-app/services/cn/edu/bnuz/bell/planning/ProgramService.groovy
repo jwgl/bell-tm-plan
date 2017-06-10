@@ -1,13 +1,16 @@
 package cn.edu.bnuz.bell.planning
 
 import cn.edu.bnuz.bell.service.DataAccessService
+import grails.gorm.transactions.Transactional
 
 /**
  * 教学计划服务
  * @author Yang Lin
  */
+@Transactional(readOnly = true)
 class ProgramService {
     DataAccessService dataAccessService
+
     boolean isOwner(Integer programId, String userId) {
         dataAccessService.exists '''
 select p.id

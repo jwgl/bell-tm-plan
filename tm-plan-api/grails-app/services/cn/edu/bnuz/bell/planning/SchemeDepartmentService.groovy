@@ -2,19 +2,26 @@ package cn.edu.bnuz.bell.planning
 
 import cn.edu.bnuz.bell.http.ForbiddenException
 import cn.edu.bnuz.bell.master.TermService
+import cn.edu.bnuz.bell.utils.CollectionUtils
+import cn.edu.bnuz.bell.utils.GroupCondition
 import cn.edu.bnuz.bell.workflow.State
-import grails.transaction.Transactional
+import grails.gorm.transactions.Transactional
 
-@Transactional
+/**
+ * 教学计划部门管理服务
+ * @author Yang Lin
+ */
+@Transactional(readOnly = true)
 class SchemeDepartmentService {
     TermService termService
     SchemePublicService schemePublicService
 
     def getSchemes(String departmentId) {
-        Scheme.executeQuery '''
+        def results = Scheme.executeQuery '''
 select new map(
   s.id as id,
-  subject.name as subjectName,
+  program.id as programId,
+  subject.name as subject,
   major.grade as grade,
   s.versionNumber as versionNumber,
   s.status as status
@@ -29,6 +36,20 @@ and major.degree is not null
 and department.id = :departmentId
 order by major.grade desc, subject.id, s.versionNumber desc
 ''', [departmentId: departmentId]
+
+        List<GroupCondition> conditions = [
+                new GroupCondition(
+                        groupBy: 'programId',
+                        into: 'versions',
+                        mappings: [
+                                programId: 'id',
+                                subject: 'subject',
+                                grade: 'grade',
+                        ]
+                )
+        ]
+
+        CollectionUtils.groupBy(results, conditions)
     }
 
     def getScheme(String departmentId, Long id) {

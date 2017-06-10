@@ -1,8 +1,8 @@
 package cn.edu.bnuz.bell.planning
 
-import grails.transaction.Transactional
+import grails.gorm.transactions.Transactional
 
-@Transactional
+@Transactional(readOnly = true)
 class SchemeTemplateService {
 
     def getList() {

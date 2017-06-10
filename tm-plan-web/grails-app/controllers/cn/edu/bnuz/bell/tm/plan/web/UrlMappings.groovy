@@ -3,9 +3,6 @@ package cn.edu.bnuz.bell.tm.plan.web
 class UrlMappings {
 
     static mappings = {
-        "/visions"(resources:'visionAdmin', includes: ['index'])
-
-        "/schemes"(resources: 'schemeAdmin', includes: ['index'])
 
         "/checkers"(resources: 'checker', 'includes': []) {
             "/visions"(resources: 'visionCheck', includes: ['index'])
@@ -36,9 +33,12 @@ class UrlMappings {
             "/schemes"(resources: 'schemeDraft', includes: ['index'])
         }
 
-        group "/public", {
-            "/visions"(resources:'visionPublic', includes: ['index', 'show'])
-            "/schemes"(resources: 'schemePublic', includes: ['index', 'show'])
+        "/visions"(resources:'visionPublic', includes: ['index', 'show'])
+        "/schemes"(resources: 'schemePublic', includes: ['index', 'show'])
+
+        group "/admin", {
+            "/visions"(resources:'visionAdmin', includes: ['index'])
+            "/schemes"(resources: 'schemeAdmin', includes: ['index'])
         }
 
         group "/settings", {

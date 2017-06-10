@@ -2,9 +2,13 @@ package cn.edu.bnuz.bell.planning
 
 import cn.edu.bnuz.bell.master.TermService
 import cn.edu.bnuz.bell.workflow.State
-import grails.transaction.Transactional
+import grails.gorm.transactions.Transactional
 
-@Transactional
+/**
+ * 培养方案部门管理服务
+ * @author Yang Lin
+ */
+@Transactional(readOnly = true)
 class VisionDepartmentService {
     TermService termService
 
@@ -12,7 +16,7 @@ class VisionDepartmentService {
      * 按学院获取列表
      * @param departmentId 学院ID
      */
-    def getVisionsByDepartment(String departmentId) {
+    def getLatestVisions(String departmentId) {
         def startGrade = termService.minInSchoolGrade
         Vision.executeQuery '''
 select new map(

@@ -2,7 +2,7 @@ package cn.edu.bnuz.bell.planning
 
 import cn.edu.bnuz.bell.http.ForbiddenException
 import cn.edu.bnuz.bell.http.NotFoundException
-import grails.transaction.Transactional
+import grails.gorm.transactions.Transactional
 
 @Transactional
 class SchemeToesService {

@@ -5,8 +5,12 @@ import cn.edu.bnuz.bell.security.User
 import cn.edu.bnuz.bell.service.DataAccessService
 import cn.edu.bnuz.bell.workflow.Activities
 import cn.edu.bnuz.bell.workflow.ReviewerProvider
-import grails.transaction.Transactional
+import grails.gorm.transactions.Transactional
 
+/**
+ * 培养方案审核人服务
+ * @author Yang Lin
+ */
 @Transactional(readOnly = true)
 class VisionReviewerService implements ReviewerProvider{
     DataAccessService dataAccessService

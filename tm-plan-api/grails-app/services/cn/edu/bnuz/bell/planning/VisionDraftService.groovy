@@ -11,7 +11,7 @@ import cn.edu.bnuz.bell.utils.GroupCondition
 import cn.edu.bnuz.bell.workflow.DomainStateMachineHandler
 import cn.edu.bnuz.bell.workflow.State
 import cn.edu.bnuz.bell.workflow.commands.SubmitCommand
-import grails.transaction.Transactional
+import grails.gorm.transactions.Transactional
 
 import javax.annotation.Resource
 

@@ -5,11 +5,10 @@ import cn.edu.bnuz.bell.service.DataAccessService
 import cn.edu.bnuz.bell.utils.CollectionUtils
 import cn.edu.bnuz.bell.utils.GroupCondition
 import cn.edu.bnuz.bell.workflow.State
-import grails.transaction.Transactional
-
+import grails.gorm.transactions.Transactional
 
 /**
- * 教学计划公共服务。
+ * 教学计划公共视图服务
  * @author Yang Lin
  */
 @Transactional(readOnly = true)
