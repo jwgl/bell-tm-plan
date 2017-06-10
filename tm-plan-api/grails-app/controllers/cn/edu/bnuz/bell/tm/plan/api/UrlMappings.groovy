@@ -15,7 +15,7 @@ class UrlMappings {
             }
         }
 
-        "/departments"(resources: 'department', includes: []) {
+        "/departments"(resources: 'department', includes: ['index']) {
             "/visions"(resources: 'visionDepartment', includes: ['index']) {
                 collection {
                     "/latest"(controller: 'visionDepartment', action: 'latest', method: 'GET')
@@ -28,11 +28,8 @@ class UrlMappings {
                     "/directions"(controller: 'schemeDepartment', action: 'directions', method: 'GET')
                 }
             }
+            "/grades"(controller: 'department', action: 'grades', method: 'GET')
         }
-
-        "/visions"(resources: 'visionAdmin', includes: ['index', 'show'])
-
-        "/schemes"(resources: 'schemeAdmin', includes: ['index', 'show'])
 
         "/checkers"(resources: 'checker', includes: []) {
             "/visions"(resources: 'visionCheck', includes:['index']) {
@@ -66,16 +63,19 @@ class UrlMappings {
             }
         }
 
+        group "/admin", {
+            "/visions"(resources: 'visionAdmin', includes: ['index', 'show'])
+            "/schemes"(resources: 'schemeAdmin', includes: ['index', 'show'])
+        }
+
         // 公共视图
-        group "/public", {
-            "/visions"(resources: 'visionPublic', includes: ['index', 'show'])
-            "/schemes"(resources: 'schemePublic', includes: ['index', 'show']) {
-                "/properties"(resources: 'property', includes: []) {
-                    "/courses"(controller: 'schemePublic', action: 'propertyCourses', method: 'GET')
-                }
-                "/directions"(resources: 'direction', includes: []) {
-                    "/courses"(controller: 'schemePublic', action: 'directionCourses', method: 'GET')
-                }
+        "/visions"(resources: 'visionPublic', includes: ['index', 'show'])
+        "/schemes"(resources: 'schemePublic', includes: ['index', 'show']) {
+            "/properties"(resources: 'property', includes: []) {
+                "/courses"(controller: 'schemePublic', action: 'propertyCourses', method: 'GET')
+            }
+            "/directions"(resources: 'direction', includes: []) {
+                "/courses"(controller: 'schemePublic', action: 'directionCourses', method: 'GET')
             }
         }
 

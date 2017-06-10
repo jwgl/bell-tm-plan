@@ -12,7 +12,7 @@ class VisionDepartmentService {
      * 按学院获取列表
      * @param departmentId 学院ID
      */
-    def getVisionsByDepartment(String departmentId) {
+    def getLatestVisions(String departmentId) {
         def startGrade = termService.minInSchoolGrade
         Vision.executeQuery '''
 select new map(
