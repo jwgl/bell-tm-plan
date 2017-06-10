@@ -8,11 +8,11 @@ import grails.transaction.Transactional
 class DepartmentService {
     List<Map> getDepartments() {
         Department.executeQuery '''
-SELECT new map(
+select new map(
   department.id as id,
   department.name as name
 )
-FROM Department department
+from Department department
 where department.isTeaching = true
   and department.enabled = true
   and exists (
@@ -28,7 +28,7 @@ order by id
 
     List<Integer> getGrades(String departmentId) {
         Major.executeQuery '''
-SELECT distinct major.grade
+select distinct major.grade
 from ProgramSettings settings
     join settings.program program
     join program.major major
