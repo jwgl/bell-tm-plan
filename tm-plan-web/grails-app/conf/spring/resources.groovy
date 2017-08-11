@@ -1,3 +1,5 @@
-// Place your Spring DSL code here
+import cn.edu.bnuz.bell.grails.EmptyMappingContextFactoryBean
+
 beans = {
+    grailsDomainClassMappingContext(EmptyMappingContextFactoryBean)
 }
