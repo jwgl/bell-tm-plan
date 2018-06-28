@@ -14,6 +14,7 @@ class SchemeCourseDto {
     Boolean isPractical
     Integer educationLevel
     Integer assessType
+    Integer propertyId
     String departmentId
     String departmentName
     Boolean isTempCourse

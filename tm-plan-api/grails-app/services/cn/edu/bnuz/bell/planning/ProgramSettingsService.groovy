@@ -32,7 +32,9 @@ select new Map(
     ps.schemeTemplateLocked as templateLocked,
     ps.schemeRevisible as schemeRevisible,
     ps.schemeExportable as schemeExportable,
-    ps.practiceCreditRatio as practiceCreditRatio
+    ps.practiceCreditRatio as practiceCreditRatio,
+    ps.minLengthOfSchooling as minLengthOfSchooling,
+    ps.maxLengthOfSchooling as maxLengthOfSchooling
 )
 from ProgramSettings ps
 join ps.program p
@@ -68,6 +70,8 @@ join p.major m
 
     def update(Integer programId, ProgramSettingsCommand cmd) {
         ProgramSettings programSettings = ProgramSettings.get(programId)
+        programSettings.minLengthOfSchooling = cmd.minLengthOfSchooling
+        programSettings.maxLengthOfSchooling = cmd.maxLengthOfSchooling
         programSettings.visionRevisible = cmd.visionRevisible
         programSettings.schemeTemplateLocked = cmd.templateLocked
         programSettings.schemeRevisible = cmd.schemeRevisible

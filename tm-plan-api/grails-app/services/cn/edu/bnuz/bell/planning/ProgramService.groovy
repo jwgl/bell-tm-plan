@@ -125,4 +125,25 @@ where program.id = :programId
 order by direction.id
 ''', [programId: programId]
     }
+
+    Map getLengthOfSchoolings(Integer programId) {
+        List<Map> result = ProgramSettings.executeQuery '''
+select new map(
+  ps.minLengthOfSchooling as minLengthOfSchooling,
+  ps.maxLengthOfSchooling as maxLengthOfSchooling,
+  subject.lengthOfSchooling as lengthOfSchooling
+)
+from ProgramSettings ps
+join ps.program program
+join program.major major
+join major.subject subject
+where program.id = :programId
+''', [programId: programId]
+
+        if (result) {
+            return result[0]
+        } else {
+            throw new Exception("Program not found: ${programId}")
+        }
+    }
 }

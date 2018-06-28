@@ -45,6 +45,16 @@ class ProgramSettings {
      */
     Boolean visionRevisible
 
+    /**
+     * 最低学习年限
+     */
+    Integer minLengthOfSchooling
+
+    /**
+     * 最高学习年限
+     */
+    Integer maxLengthOfSchooling
+
     static mapping = {
         comment '教学计划-设置'
         id                   column: 'program_id', type: 'integer', generator: 'foreign', params: [ property: 'program']
@@ -55,5 +65,7 @@ class ProgramSettings {
         schemeExportable     defaultValue: "true", comment: '是否可导入教务系统'
         practiceCreditRatio  precision: 4, scale: 2, defaultValue: "0", comment: '实践学分比例'
         visionRevisible      defaultValue: "true", comment: '是否可修订培养方案'
+        minLengthOfSchooling defaultValue: 3, comment: '最低学习年限'
+        maxLengthOfSchooling defaultValue: 6, comment: '最高学习年限'
     }
 }
