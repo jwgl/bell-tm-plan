@@ -14,6 +14,7 @@ import grails.gorm.transactions.Transactional
 @Transactional(readOnly = true)
 class VisionPublicService {
     SchemePublicService schemePublicService
+    ProgramService programService
     TermService termService
 
     /**
@@ -116,7 +117,12 @@ where vision.id = :id
 
         def vision = results[0]
         Integer programId = vision.programId
+        Map<String, Integer> lengthOfSchoolings = programService.getLengthOfSchoolings(programId)
+
         vision.schemeId = schemePublicService.getLatestSchemeId(programId)
+        vision.maxLengthOfSchooling = lengthOfSchoolings.maxLengthOfSchooling
+        vision.minLengthOfSchooling = lengthOfSchoolings.minLengthOfSchooling
+        vision.lengthOfSchooling = lengthOfSchoolings.lengthOfSchooling
 
         vision
     }

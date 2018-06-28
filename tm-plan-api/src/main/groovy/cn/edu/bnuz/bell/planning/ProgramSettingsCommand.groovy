@@ -13,4 +13,6 @@ class ProgramSettingsCommand {
     Boolean schemeRevisible
     Boolean schemeExportable
     BigDecimal practiceCreditRatio
+    Integer minLengthOfSchooling
+    Integer maxLengthOfSchooling
 }

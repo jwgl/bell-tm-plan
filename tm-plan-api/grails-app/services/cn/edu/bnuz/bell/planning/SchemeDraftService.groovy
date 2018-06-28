@@ -530,10 +530,12 @@ where scheme.id = :id
     /**
      * 查询课程，如果包含临时课程，则只选择本学院的临时课程
      * @param query 课号或名称
+     * @param type 课程类型 0:全部;1:正式课程;2:临时课程
+     * @param propertyId 所属课程性质，公选课不能用于其他性质课程
      * @param departmentId 学院ID
      * @return 课程列表
      */
-    def findCoursesByNameOrId(String query, Integer type, String departmentId) {
+    def findCoursesByNameOrId(String query, Integer type, Integer propertyId, String departmentId) {
         SchemeCourseDto.executeQuery '''
 select new Map(
   id as id,
@@ -550,7 +552,8 @@ from SchemeCourseDto
 where (id like :id or name like :name)
 and (isTempCourse = false or departmentId = :departmentId)
 and (:type = 0 or :type = 1 and isTempCourse = false or :type = 2 and isTempCourse = true)
+and (:propertyId = 2 and propertyId = 2 or :propertyId <> 2 and propertyId <> 2)
 order by locate(:query, id), locate(:query, name), id
-''', [id: "%${query}%", name: "%${query}%", query: query, type: type, departmentId: departmentId], [max: 100]
+''', [id: "%${query}%", name: "%${query}%", query: query, type: type, propertyId: propertyId, departmentId: departmentId], [max: 100]
     }
 }
