@@ -141,9 +141,9 @@ order by scheme.dateChecked desc
         domainStateMachineHandler.checkReviewer(id, userId, activity)
 
         [
-                scheme    : scheme,
+                form      : scheme,
                 counts    : getCounts(userId),
-                workitemId: workitem ? workitem.id : null,
+                workitemId: workitem?.id,
                 prevId    : getPrevReviewId(userId, id, type),
                 nextId    : getNextReviewId(userId, id, type),
         ]
@@ -163,7 +163,7 @@ order by scheme.dateChecked desc
         domainStateMachineHandler.checkReviewer(id, userId, activity)
 
         [
-                scheme    : scheme,
+                form      : scheme,
                 counts    : getCounts(userId),
                 workitemId: workitemId,
                 prevId    : getPrevReviewId(userId, id, type),

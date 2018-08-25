@@ -131,11 +131,11 @@ order by vision.dateChecked desc
         domainStateMachineHandler.checkReviewer(id, userId, activity)
 
         [
-                vision: vision,
-                counts: getCounts(userId),
-                workitemId: workitem ? workitem.id : null,
-                prevId: getPrevReviewId(userId, id, type),
-                nextId: getNextReviewId(userId, id, type),
+                form      : vision,
+                counts    : getCounts(userId),
+                workitemId: workitem?.id,
+                prevId    : getPrevReviewId(userId, id, type),
+                nextId    : getNextReviewId(userId, id, type),
         ]
     }
 
@@ -147,11 +147,11 @@ order by vision.dateChecked desc
         domainStateMachineHandler.checkReviewer(id, userId, activity)
 
         [
-                vision: vision,
-                counts: getCounts(userId),
+                form      : vision,
+                counts    : getCounts(userId),
                 workitemId: workitemId,
-                prevId: getPrevReviewId(userId, id, type),
-                nextId: getNextReviewId(userId, id, type),
+                prevId    : getPrevReviewId(userId, id, type),
+                nextId    : getNextReviewId(userId, id, type),
         ]
     }
 
