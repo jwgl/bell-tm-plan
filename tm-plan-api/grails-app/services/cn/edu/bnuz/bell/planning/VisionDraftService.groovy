@@ -259,7 +259,7 @@ where program.id = :programId
             throw new NotFoundException()
         }
 
-        if (!programService.isOwner(vision.program.id, userId)) {
+        if (!programService.isOwner(vision.programId as Integer, userId)) {
             throw new ForbiddenException()
         }
 
@@ -287,7 +287,7 @@ where program.id = :programId
             throw new NotFoundException()
         }
 
-        if (!programService.isOwner(vision.program.id, userId)) {
+        if (!programService.isOwner(vision.programId as Integer, userId)) {
             throw new ForbiddenException()
         }
 
@@ -314,7 +314,7 @@ where program.id = :programId
             throw new NotFoundException()
         }
 
-        if (!programService.isOwner(vision.program.id, userId)) {
+        if (!programService.isOwner(vision.programId as Integer, userId)) {
             throw new ForbiddenException()
         }
 

@@ -282,7 +282,7 @@ where program.id = :programId
             throw new NotFoundException()
         }
 
-        if (!programService.isOwner(scheme.program.id, userId)) {
+        if (!programService.isOwner(scheme.programId as Integer, userId)) {
             throw new ForbiddenException()
         }
 
@@ -339,7 +339,7 @@ where program.id = :programId
             } else {
                 if (!c.courseId) {
                     def tempCourse = c.toTempCourse()
-                    tempCourse.department = Department.load(programService.getDepartmentId(scheme.program.id))
+                    tempCourse.department = Department.load(programService.getDepartmentId(scheme.programId as Integer))
                     tempCourse.save()
                     c.courseId = tempCourse.id
                 }
@@ -360,7 +360,7 @@ where program.id = :programId
                 // 如果没有引用或者引用项不是当前版本的，则插入
                 if (!c.courseId) {
                     def tempCourse = c.toTempCourse()
-                    tempCourse.department = Department.load(programService.getDepartmentId(scheme.program.id))
+                    tempCourse.department = Department.load(programService.getDepartmentId(scheme.programId as Integer))
                     tempCourse.save()
                     c.courseId = tempCourse.id
                 }
@@ -451,7 +451,7 @@ where program.id = :programId
             throw new NotFoundException()
         }
 
-        if (!programService.isOwner(scheme.program.id, userId)) {
+        if (!programService.isOwner(scheme.programId as Integer, userId)) {
             throw new ForbiddenException()
         }
 
@@ -479,7 +479,7 @@ where program.id = :programId
             throw new NotFoundException()
         }
 
-        if (!programService.isOwner(scheme.program.id, userId)) {
+        if (!programService.isOwner(scheme.programId as Integer, userId)) {
             throw new ForbiddenException()
         }
 
