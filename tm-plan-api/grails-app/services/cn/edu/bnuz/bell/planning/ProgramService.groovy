@@ -1,5 +1,6 @@
 package cn.edu.bnuz.bell.planning
 
+import cn.edu.bnuz.bell.http.BadRequestException
 import cn.edu.bnuz.bell.service.DataAccessService
 import grails.gorm.transactions.Transactional
 
@@ -143,7 +144,7 @@ where program.id = :programId
         if (result) {
             return result[0]
         } else {
-            throw new Exception("Program not found: ${programId}")
+            throw new BadRequestException("Program not found: ${programId}")
         }
     }
 }
