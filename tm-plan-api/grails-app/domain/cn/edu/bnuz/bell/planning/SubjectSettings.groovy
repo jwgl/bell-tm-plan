@@ -31,8 +31,8 @@ class SubjectSettings {
 
     static mapping = {
         comment        '校内专业设置'
-        id             column: 'subject_id', type: 'string', sqlType: 'varchar(4)', generator: 'foreign', params: [ property: 'subject']
-        subject        comment: '校内专业', insertable: false, updateable: false
+        id             column: 'subject_id', type: 'string', sqlType: 'varchar(4)', generator: 'foreign', params: [ property: 'subject'], comment: '校内专业'
+        subject        insertable: false, updateable: false
         director       comment: '专业负责人'
         secretary      comment: '学院教务秘书'
     }

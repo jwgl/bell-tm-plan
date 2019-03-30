@@ -3,6 +3,7 @@ Thumbs.db
 .gradle
 build/
 classes/
+out/
 .idea
 *.iml
 *.ipr

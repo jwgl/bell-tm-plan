@@ -57,8 +57,8 @@ class ProgramSettings {
 
     static mapping = {
         comment '教学计划-设置'
-        id                   column: 'program_id', type: 'integer', generator: 'foreign', params: [ property: 'program']
-        program              comment: '教学计划', insertable: false, updateable: false
+        id                   column: 'program_id', type: 'integer', generator: 'foreign', params: [ property: 'program'], comment: '教学计划'
+        program              insertable: false, updateable: false
         schemeTemplate       comment: '教学安排模板'
         schemeTemplateLocked defaultValue: "true", comment: '是否锁定模板'
         schemeRevisible      defaultValue: "true", comment: '是否可修订教学计划'
