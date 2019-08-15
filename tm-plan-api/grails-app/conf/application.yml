@@ -134,7 +134,10 @@ eureka:
 security:
     oauth2:
         resource:
-            userInfoUri: http://localhost/uaa/user
+            jwt:
+                key-uri: http://localhost/uaa/publicKey
+        client:
+            client-id: ${info.app.name}
 
 bell:
     orm:
