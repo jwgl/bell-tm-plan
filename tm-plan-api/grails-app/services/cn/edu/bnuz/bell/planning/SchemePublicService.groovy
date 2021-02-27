@@ -40,6 +40,7 @@ join subject.department department
 where subject.isTopUp = false
 and major.degree is not null
 and major.grade >= :startGrade
+and make_date(major.grade, 6, 1) <= current_date()
 and scheme.versionNumber = (
   select max(s.versionNumber)
   from Scheme s
